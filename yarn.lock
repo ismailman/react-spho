@@ -4644,10 +4644,10 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
-simple-performant-harmonic-oscillator@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-1.0.2.tgz#b159372b74b89154d6d1badf2de8b1e3dcbccf26"
-  integrity sha512-AixxAjVC9GK9ySYxDXZBet35aU5MqtC7pJGSqCFALt+lZEk4519Mq8U+M6HD7ojjzWFVjCoaRQw2IFzfUVnt0w==
+simple-performant-harmonic-oscillator@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-1.1.0.tgz#16451e9fa686ab4f47d25cdd45f9e939e26bb927"
+  integrity sha512-eHte91Zzsar5H7uwJP4r6B9sjUy/Vxh+6gDV7m/OXiVtlPqqJ7NOqYkDrcsZcPf3XLelxdWDcSQGURrMx3iPfA==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"
@@ -5184,12 +5184,12 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-use-spho@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/use-spho/-/use-spho-0.0.3.tgz#94d56806c23a8151c3918b450fdfa89a031d1ac9"
-  integrity sha512-yPotRgW9D/UNlmTe08ZJn8hcVaMd6v2O+pc/PqYrBBr3p34LqA/t2/GKTezzxS49dOMTrjJmjORvZLRWU7loew==
+use-spho@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/use-spho/-/use-spho-0.0.4.tgz#c8bf7bbfb8c8a708ef42d4a72cdb6105babee30a"
+  integrity sha512-TW2ayQHkgGDRXKG0FbT8O42pZR+VJA2/7Rs2Gg5gt8tYkL/IoRUvfUCi5KnBYwCeLjoygecYmiLv3YJKNTIFCw==
   dependencies:
-    simple-performant-harmonic-oscillator "^1.0.2"
+    simple-performant-harmonic-oscillator "^1.1.0"
 
 use@^3.1.0:
   version "3.1.1"

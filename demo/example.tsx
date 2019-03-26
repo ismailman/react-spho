@@ -6,16 +6,12 @@ import getSpringyDOMElement from '../src/springyDOMElement';
 const SDiv = getSpringyDOMElement(
     {
         left: {
-            stiffness: 120,
-            damping: 14,
-            mass: 1,
-            allowOvershooting: true
+            stiffness: 0.025,
+            damping: 0.2
         },
         top: {
-            stiffness: 120,
-            damping: 14,
-            mass: 1,
-            allowOvershooting: true
+            stiffness: 0.025,
+            damping: 0.2
         }
     },
     'div'
@@ -33,8 +29,8 @@ function Trail() {
                 setTop(e.pageY);
             }}
         >
-            <div style={{left: left, top: top, backgroundColor: 'blue'}} />
             <SDiv left={left + 5} top={top + 5} style={{backgroundColor: 'red'}} />
+            <div style={{left: left, top: top, backgroundColor: 'blue'}} />
         </div>
     );
 }

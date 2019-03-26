@@ -11,7 +11,7 @@
   },
   "browserslist": ["Chrome 72"],
   "dependencies": {
-    "use-spho": "^0.0.3"
+    "use-spho": "^0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
