@@ -1,0 +1,25 @@
+{
+  "name": "react-spho",
+  "version": "0.0.1",
+  "description": "Simple spring animation library for React",
+  "main": "index.ts",
+  "repository": "https://github.com/ismailman/use-spho.git",
+  "author": "<code@omar.dev>",
+  "license": "MIT",
+  "babel": {
+    "presets": ["@babel/preset-env"]
+  },
+  "browserslist": ["Chrome 72"],
+  "dependencies": {
+    "use-spho": "^0.0.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@types/react": "^16.8.8",
+    "parcel": "^1.12.3",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "typescript": "^3.3.4000"
+  }
+}
