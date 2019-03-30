@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-import getSpringyDOMElement from '../src/springyDOMElement';
+import {getSpringyDOMElement} from '../../index';
 
 const SDiv = getSpringyDOMElement(
     {
         left: {
-            stiffness: 0.025,
-            damping: 0.2
+            bounciness: 1,
+            speed: 1
         },
         top: {
-            stiffness: 0.025,
-            damping: 0.2
+            bounciness: 1,
+            speed: 1
         }
     },
     'div'

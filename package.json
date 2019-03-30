@@ -7,11 +7,15 @@
   "author": "<code@omar.dev>",
   "license": "MIT",
   "babel": {
-    "presets": ["@babel/preset-env"]
+    "presets": [
+      "@babel/preset-env"
+    ]
   },
-  "browserslist": ["Chrome 72"],
+  "browserslist": [
+    "Chrome 72"
+  ],
   "dependencies": {
-    "use-spho": "^0.0.4"
+    "simple-performant-harmonic-oscillator": "^2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
