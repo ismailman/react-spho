@@ -2,8 +2,13 @@ import React, {forwardRef} from 'react';
 import Spring, {SpringConfig, SpringValueListener} from 'simple-performant-harmonic-oscillator';
 import handleForwardedRef from './handleForwardedRef';
 
+export type SpringyComponentPropertyConfig = SpringConfig | {
+    configWhenGettingBigger: SpringConfig;
+    configWhenGettingSmaller: SpringConfig;
+};
+
 export type SpringConfigMap = {
-    [key:string]: SpringConfig&{
+    [key:string]: SpringyComponentPropertyConfig&{
         initialFromValueOffset?: number;
         initialFromValue?: number;
     };
@@ -39,7 +44,18 @@ export default function getSpringyComponent<T extends object>(configMap: SpringC
                     this._springMap.delete(property);
                 }
                 else {
-                    spring.setToValue(propValue);
+                    if(configMap[property].configWhenGettingBigger && propValue > spring.getToValue()){
+                        spring.setBounciness(configMap[property].configWhenGettingBigger.bounciness);
+                        spring.setSpeed(configMap[property].configWhenGettingBigger.speed);
+                    }
+                    else if(configMap[property].configWhenGettingSmaller && propValue < spring.getToValue()){
+                        spring.setBounciness(configMap[property].configWhenGettingSmaller.bounciness);
+                        spring.setSpeed(configMap[property].configWhenGettingSmaller.speed);
+                    }
+
+                    if(!isNaN(propValue)){
+                        spring.setToValue(propValue);
+                    }
                 }
                 return;
             }
@@ -58,8 +74,19 @@ export default function getSpringyComponent<T extends object>(configMap: SpringC
 
             const toValue = propValue;
 
+            let config;
+            if(configMap[property].configWhenGettingBigger && toValue >= fromValue) {
+                config = configMap[property].configWhenGettingBigger;
+            }
+            else if(configMap[property].configWhenGettingSmaller && toValue < fromValue) {
+                config = configMap[property].configWhenGettingSmaller;
+            }
+            else {
+                config = configMap[property];
+            }
+
             spring = new Spring(
-                configMap[property],
+                config,
                 {fromValue, toValue}
             );
 

@@ -21,3 +21,7 @@ export const AUTO_PROPERTIES = [
     'bottom',
     'left'
 ];
+
+export const RESIZE_PROPERTIES = [
+    'width', 'height'
+];

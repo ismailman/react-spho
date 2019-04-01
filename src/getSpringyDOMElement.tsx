@@ -1,7 +1,7 @@
 import React, {forwardRef, useEffect, useLayoutEffect, useRef} from 'react';
 import getSpringyComponent, {SpringConfigMap, SPHOProps} from './getSpringyComponent';
 import handleForwardedRef from './handleForwardedRef';
-import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES} from './domStyleProperties';
+import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';
 import reconciler from './reconciler';
 
 export default function getSpringyDOMElement(configMap: SpringConfigMap, ComponentToWrap: string){
@@ -14,7 +14,74 @@ export default function getSpringyDOMElement(configMap: SpringConfigMap, Compone
 
         _reconcileUpdate;
         _ref;
-        _lastProps;
+        _isSecondRender: boolean = false;
+        _needsSecondRender: boolean = false;
+        _resizeObserver;
+
+        render() {
+            const propsWithoutForwardedRef = {...this.props};
+            delete (propsWithoutForwardedRef as any).forwardedRef;
+
+            this._flipAutoPropsIfNecessary(propsWithoutForwardedRef);
+
+            return (                
+                <SpringyComponent
+                    {...propsWithoutForwardedRef}
+                    onSPHOValueUpdate={(property, value) => {
+                        this._updateSPHOValueForProperty(property, value);
+                        if(this.props.onSPHOValueUpdate) this.props.onSPHOValueUpdate(property, value);
+                    }}
+                    ref={ref => {
+                        this._ref = ref;
+                        handleForwardedRef(ref, this.props.forwardedRef)
+                    }}
+                >
+                    <SecondRenderGuard isSecondRender={this._isSecondRender}>
+                        {this.props.children}
+                    </SecondRenderGuard>
+                </SpringyComponent>
+                
+            );
+        }
+
+        componentDidMount(){
+            const resizableSpringyAutoProperties = springyPropsThatCanBeAuto.filter(property => RESIZE_PROPERTIES.includes(property));
+            if(!window.ResizeObserver || resizableSpringyAutoProperties.length === 0) return;
+
+            this._resizeObserver = new ResizeObserver(entries => {
+                const propsThatAreAutoAndResizable = 
+                    Object.keys(this.props)
+                            .filter(
+                                property => 
+                                    this.props[property] === 'auto' &&
+                                    RESIZE_PROPERTIES.includes(property)
+                            );
+
+                if(propsThatAreAutoAndResizable.length > 0 && !this._isSecondRender && !this._needsSecondRender){
+                    this._rerenderToUseTrueSize();
+                }
+            });
+
+            this._resizeObserver.observe(this._ref);
+        }
+
+        componentDidUpdate(){
+            if(!this._isSecondRender && this._needsSecondRender){
+                this._rerenderToUseTrueSize();
+            }
+        }
+
+        componentWillUnmount() {
+            if(this._resizeObserver) this._resizeObserver.disconnect();
+        }
+
+        _rerenderToUseTrueSize() {
+            this._isSecondRender = true;
+            this.forceUpdate(() => {
+                this._needsSecondRender = false;
+                this._isSecondRender = false;
+            });
+        }
 
         _updateSPHOValueForProperty(property, value) {
             let existingUpdate = this._reconcileUpdate;
@@ -44,25 +111,8 @@ export default function getSpringyDOMElement(configMap: SpringConfigMap, Compone
                         );
 
             if(propsThatAreAuto.length === 0) return;
-
-            if(this._ref == null){
-                //we're gonna need to render this element again unfortunately
-                propsThatAreAuto.forEach(property => {
-                    delete mutableProps[property];
-                });
-
-                // we do this display mangling to prevent a flash of unstyled stuff
-                const oldDisplay = (mutableProps.style || {}).display || '';
-                mutableProps.style = {
-                    ...(mutableProps.style || {}),
-                    display: 'none'
-                };
-
-                Promise.resolve().then(() => {
-                    this._ref.style.display = oldDisplay;
-                    this.forceUpdate();
-                });
-
+            if(!this._isSecondRender) {
+                this._needsSecondRender = true;
                 return;
             }
             
@@ -90,34 +140,23 @@ export default function getSpringyDOMElement(configMap: SpringConfigMap, Compone
             clone.remove();
         }
 
-        render() {
-            const propsWithoutForwardedRef = {...this.props};
-            delete (propsWithoutForwardedRef as any).forwardedRef;
-
-            this._flipAutoPropsIfNecessary(propsWithoutForwardedRef);
-
-            return (
-                <SpringyComponent
-                    {...propsWithoutForwardedRef}
-                    onSPHOValueUpdate={(property, value) => {
-                        this._updateSPHOValueForProperty(property, value);
-                        if(this.props.onSPHOValueUpdate) this.props.onSPHOValueUpdate(property, value);
-                    }}
-                    ref={ref => {
-                        this._ref = ref;
-                        handleForwardedRef(ref, this.props.forwardedRef)
-                    }}
-                />
-            );
-        }
-
-        componentDidUpdate() {
-            this._lastProps = this.props; //gross I know!!! but they got rid of componentWillReceiveProps so what can I do?
-        }
-
      }
 
      const DOMElement: any = SpringyDOMElement;
      return forwardRef((props, ref) => <DOMElement {...props} forwardedRef={ref} />);
+
+}
+
+/*
+    only render children on the first render
+*/
+class SecondRenderGuard extends React.Component {
+    shouldComponentUpdate(nextProps){
+        return !nextProps.isSecondRender;
+    }
+
+    render() {
+        return this.props.children;
+    }
 
 }

@@ -15,7 +15,7 @@
     "Chrome 72"
   ],
   "dependencies": {
-    "simple-performant-harmonic-oscillator": "^2.0.3"
+    "simple-performant-harmonic-oscillator": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
