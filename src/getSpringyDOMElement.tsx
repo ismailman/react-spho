@@ -4,7 +4,15 @@ import handleForwardedRef from './handleForwardedRef';
 import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';
 import reconciler from './reconciler';
 
-export default function getSpringyDOMElement(configMap: SpringConfigMap, ComponentToWrap: string){
+export type DOMSpringConfigMap = {
+    [key:string]: SpringConfigMap&{
+        initialFromValueOffset?: number;
+        initialFromValue?: number;
+        unitSuffix?: string;
+    };
+}
+
+export default function getSpringyDOMElement(configMap: DOMSpringConfigMap, ComponentToWrap: string){
 
      const SpringyComponent: any = getSpringyComponent(configMap, ComponentToWrap);    
      const propsThatAreSpringy = Object.keys(configMap);
@@ -46,23 +54,29 @@ export default function getSpringyDOMElement(configMap: SpringConfigMap, Compone
 
         componentDidMount(){
             const resizableSpringyAutoProperties = springyPropsThatCanBeAuto.filter(property => RESIZE_PROPERTIES.includes(property));
-            if(!window.ResizeObserver || resizableSpringyAutoProperties.length === 0) return;
+            if(resizableSpringyAutoProperties.length === 0) return;
 
-            this._resizeObserver = new ResizeObserver(entries => {
-                const propsThatAreAutoAndResizable = 
-                    Object.keys(this.props)
-                            .filter(
-                                property => 
-                                    this.props[property] === 'auto' &&
-                                    RESIZE_PROPERTIES.includes(property)
-                            );
+            if(window.ResizeObserver){
+                this._resizeObserver = new ResizeObserver(entries => {
+                    const propsThatAreAutoAndResizable = 
+                        Object.keys(this.props)
+                                .filter(
+                                    property => 
+                                        this.props[property] === 'auto' &&
+                                        RESIZE_PROPERTIES.includes(property)
+                                );
+    
+                    if(propsThatAreAutoAndResizable.length > 0 && !this._isSecondRender && !this._needsSecondRender){
+                        this._rerenderToUseTrueSize();
+                    }
+                });
+    
+                this._resizeObserver.observe(this._ref);
+            }
 
-                if(propsThatAreAutoAndResizable.length > 0 && !this._isSecondRender && !this._needsSecondRender){
-                    this._rerenderToUseTrueSize();
-                }
-            });
-
-            this._resizeObserver.observe(this._ref);
+            if(this._needsSecondRender){
+                this._rerenderToUseTrueSize();
+            }
         }
 
         componentDidUpdate(){
@@ -96,7 +110,9 @@ export default function getSpringyDOMElement(configMap: SpringConfigMap, Compone
                 this._reconcileUpdate = existingUpdate;
             }
 
-            existingUpdate.values[property] = value;
+            existingUpdate.values[property] = configMap[property] && (configMap[property].unitSuffix != null) ?
+                                                `${value}${configMap[property].unitSuffix}` :
+                                                value;
         }
 
         _flipAutoPropsIfNecessary(mutableProps) {

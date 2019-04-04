@@ -34,6 +34,8 @@ export default function getSpringyComponent<T extends object>(configMap: SpringC
         }
 
         _setupOrUpdateSpringForProperty(property, propValue) {
+            if(isNaN(propValue)) return;
+
             let spring = this._springMap.get(property);
 
             // spring has already been initialized and we're just updating value
@@ -51,10 +53,6 @@ export default function getSpringyComponent<T extends object>(configMap: SpringC
                     else if(configMap[property].configWhenGettingSmaller && propValue < spring.getToValue()){
                         spring.setBounciness(configMap[property].configWhenGettingSmaller.bounciness);
                         spring.setSpeed(configMap[property].configWhenGettingSmaller.speed);
-                    }
-
-                    if(!isNaN(propValue)){
-                        spring.setToValue(propValue);
                     }
                 }
                 return;
