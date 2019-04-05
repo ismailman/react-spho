@@ -4,17 +4,16 @@ import ReactDOM from 'react-dom';
 import {getSpringyDOMElement} from '../../index';
 
 const SDiv = getSpringyDOMElement(
+    'div',
     {
-        translateX: {
-            bounciness: 1,
-            initialFromValue: -300,
-            unitSuffix: 'px'
+        scale: {
+            bounciness: 0.5,
+            initialFromValue: 2
         },
         opacity: {
             initialFromValue: 0
         }
-    },
-    'div'
+    }
 );
 
 
@@ -37,7 +36,10 @@ function List() {
                 {
                     itemList.map((item, index) => (
                         <div key={String(item)}>
-                            <SDiv height="auto" translateX={0} opacity={1} style={{overflow: 'hidden', backgroundColor: 'green', display: 'inline-block'}}>
+                            <SDiv 
+                                springyStyle={{scale: 1, opacity: 1}} 
+                                style={{overflow: 'hidden', backgroundColor: 'green', display: 'inline-block'}}
+                            >
                                 {new Date(item).toISOString()}
                                 <button
                                     onClick={() => setItemList([...itemList.slice(0, index), ...itemList.slice(index + 1)])}

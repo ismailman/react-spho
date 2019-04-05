@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom';
 import {getSpringyDOMElement} from '../../index';
 
 const SDiv = getSpringyDOMElement(
+    'div',
     {
         height: {
             bounciness: 0.5,
             speed: 1.5,
             initialFromValue: 200
         }
-    },
-    'div'
+    }
 );
 
 
@@ -33,7 +33,7 @@ function LazyExpander() {
             {
                 isElementAdded && (
                     <SDiv 
-                        height={expanded ? 'auto' : 0} 
+                        springyStyle={{height: expanded ? 'auto': 0}}
                         style={{backgroundColor: 'red', width: '200px', overflow: 'hidden'}}
                         onSPHOValueAtRest={(property, value) => {
                             if(property !== 'height' || value !== 0) return;

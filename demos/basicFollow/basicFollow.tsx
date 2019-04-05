@@ -3,19 +3,7 @@ import ReactDOM from 'react-dom';
 
 import {getSpringyDOMElement} from '../../index';
 
-const SDiv = getSpringyDOMElement(
-    {
-        left: {
-            bounciness: 1,
-            speed: 1
-        },
-        top: {
-            bounciness: 1,
-            speed: 1
-        }
-    },
-    'div'
-);
+const SDiv = getSpringyDOMElement('div');
 
 
 function Trail() {
@@ -29,7 +17,7 @@ function Trail() {
                 setTop(e.pageY);
             }}
         >
-            <SDiv left={left + 5} top={top + 5} style={{backgroundColor: 'red'}} />
+            <SDiv springyStyle={{left: left + 5, top: top + 5}} style={{backgroundColor: 'red'}} />
             <div style={{left: left, top: top, backgroundColor: 'blue'}} />
         </div>
     );
