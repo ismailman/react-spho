@@ -8,8 +8,9 @@ import reconciler from './reconciler';
 
 export type DOMSpringConfigMap = {
     [key:string]: SpringyComponentPropertyConfig&{
-        initialFromValueOffset?: number;
-        initialFromValue?: number;
+        onEnterFromValueOffset?: number;
+        onEnterFromValue?: number;
+        onExitToValue?: number;
         unitSuffix?: string;
     };
 }
@@ -78,6 +79,8 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 spring.end();
             }
             this._killResizeObserver();
+
+            this._handleOnExitIfExists();
         }
 
         _flipAutoPropsIfNecessary(springyStyle) {
@@ -149,11 +152,11 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
             if(configMap[property]){
                 fromValue = 
-                    configMap[property].initialFromValue != null ?
-                        configMap[property].initialFromValue :
-                    configMap[property].initialFromValueOffset == null ? 
+                    configMap[property].onEnterFromValue != null ?
+                        configMap[property].onEnterFromValue :
+                    configMap[property].onEnterFromValueOffset == null ? 
                         propValue :
-                        propValue + configMap[property].initialFromValueOffset;
+                        propValue + configMap[property].onEnterFromValueOffset;
 
                 toValue = propValue;
 
@@ -265,6 +268,73 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             if(this._resizeObserver){
                 this._resizeObserver.disconnect();
                 this._resizeObserver = null;
+            }
+        }
+
+        _handleOnExitIfExists() {
+            if(!configMap || !this._ref) return;
+            const propertiesWithOnExitValue = Object.keys(configMap).filter(property => configMap[property].onExitToValue != null);
+
+            if(propertiesWithOnExitValue.length === 0) return;
+
+            const lastStyle = {...this.props.style};
+
+            const fromValues = {};
+            const clone = this._ref.cloneNode(true); //true = deep clone
+            this._ref.insertAdjacentElement('beforebegin', clone);
+            this._ref.remove();
+            const computedStyle = getComputedStyle(clone);
+            propertiesWithOnExitValue.filter(property => !TRANSFORM_PROPERTIES.includes(property)).forEach(property => {
+                fromValues[property] = parseFloat(computedStyle[property]); //use target value for mutable prop
+            });
+
+            const transformPropertiesWithOnExitValue = propertiesWithOnExitValue.filter(property => TRANSFORM_PROPERTIES.includes(property));
+            if(transformPropertiesWithOnExitValue.length > 0){
+                const transform = computedStyle.transform; // matrix(scaleX(),skewY(),skewX(),scaleY(),translateX(),translateY())
+            }
+
+            clone.insertAdjacentElement('beforebegin', this._ref);
+
+            let existingUpdate;
+            let springsActiveCount = 0;
+            for(let property of propertiesWithOnExitValue) {
+                const config = configMap[property];
+                let springConfig;
+                if(fromValues[property] > config.onExitToValue && config.configWhenGettingSmaller) {
+                    springConfig = config.configWhenGettingSmaller;
+                }
+                else if (fromValues[property] < config.onExitToValue && config.configWhenGettingBigger) {
+                    springConfig = config.conficWhenGettingBigger;
+                }
+                else {
+                    springConfig = config;
+                }
+
+                springsActiveCount++;
+                const spring = new Spring(springConfig, {fromValue: fromValues[property], toValue: config.onExitToValue});
+                spring.onAtRest(() => {
+                    spring.end();
+                    springsActiveCount--;
+                    if(springsActiveCount === 0) clone.remove();
+                });
+                spring.onUpdate((value) => {
+                    if(!existingUpdate){
+                        existingUpdate = {
+                            scheduled: Promise.resolve().then(() => {
+                                reconciler(clone, {...lastStyle}, existingUpdate.values);
+                                existingUpdate = null;
+                            }),
+                            values: {}
+                        };
+                    }
+
+                    const suffix = 
+                        configMap && configMap[property] && configMap[property].unitSuffix ?
+                            configMap[property].unitSuffix :
+                            DEFAULT_UNIT_SUFFIXES[property];
+
+                    existingUpdate.values[property] = `${value}${suffix}`;
+                });
             }
         }
      }

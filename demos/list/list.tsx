@@ -6,12 +6,17 @@ import {getSpringyDOMElement} from '../../index';
 const SDiv = getSpringyDOMElement(
     'div',
     {
-        scale: {
+        height: {
             bounciness: 0.5,
-            initialFromValue: 2
+            onEnterFromValue: 2,
+            onExitToValue: 0
+        },
+        translateX: {
+            onEnterFromValue: 100
         },
         opacity: {
-            initialFromValue: 0
+            onEnterFromValue: 0,
+            onExitToValue: 0
         }
     }
 );
@@ -35,19 +40,18 @@ function List() {
             <div>
                 {
                     itemList.map((item, index) => (
-                        <div key={String(item)}>
-                            <SDiv 
-                                springyStyle={{scale: 1, opacity: 1}} 
-                                style={{overflow: 'hidden', backgroundColor: 'green', display: 'inline-block'}}
+                        <SDiv 
+                            key={String(item)}
+                            springyStyle={{height: 'auto', translateX: 0, opacity: 1}} 
+                            style={{overflow: 'hidden', backgroundColor: 'green', transform: 'translateX(-10px)'}}
+                        >
+                            {new Date(item).toISOString()}
+                            <button
+                                onClick={() => setItemList([...itemList.slice(0, index), ...itemList.slice(index + 1)])}
                             >
-                                {new Date(item).toISOString()}
-                                <button
-                                    onClick={() => setItemList([...itemList.slice(0, index), ...itemList.slice(index + 1)])}
-                                >
-                                    X
-                                </button>
-                            </SDiv>
-                        </div>
+                                X
+                            </button>
+                        </SDiv>
                     ))
                 }
             </div>
