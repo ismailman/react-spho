@@ -8,15 +8,11 @@ const SDiv = getSpringyDOMElement(
     {
         height: {
             bounciness: 0.5,
-            onEnterFromValue: 2,
             onExitToValue: 0
-        },
-        translateX: {
-            onEnterFromValue: 100
         },
         opacity: {
             onEnterFromValue: 0,
-            onExitToValue: 0
+            onEnterToValue: 1
         }
     }
 );
@@ -42,8 +38,7 @@ function List() {
                     itemList.map((item, index) => (
                         <SDiv 
                             key={String(item)}
-                            springyStyle={{height: 'auto', translateX: 0, opacity: 1}} 
-                            style={{overflow: 'hidden', backgroundColor: 'green', transform: 'translateX(-10px)'}}
+                            style={{overflow: 'hidden', backgroundColor: 'green'}}
                         >
                             {new Date(item).toISOString()}
                             <button

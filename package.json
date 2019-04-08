@@ -15,7 +15,9 @@
     "Chrome 72"
   ],
   "dependencies": {
-    "simple-performant-harmonic-oscillator": "^2.2.1"
+    "decompose-dommatrix": "^1.0.3",
+    "simple-performant-harmonic-oscillator": "^2.2.1",
+    "transform-values-to-transform-commands": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

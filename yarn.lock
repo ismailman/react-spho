@@ -1861,6 +1861,11 @@ decode-uri-component@^0.2.0:
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
   integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
 
+decompose-dommatrix@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/decompose-dommatrix/-/decompose-dommatrix-1.0.3.tgz#74e64f7847bcb00b169b62ff232002ad26fa7cf1"
+  integrity sha512-G/0fPWc0dD0xiCbY+Zu16D5+iDhiRU5jMtaNuUj1McUuhn0k3kGFEMReZL/H7NSH/zol9Z8NmpotRTb3Qqxauw==
+
 deep-extend@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
@@ -5040,6 +5045,11 @@ tr46@^1.0.1:
   integrity sha1-qLE/1r/SSJUZZ0zN5VujaTtwbQk=
   dependencies:
     punycode "^2.1.0"
+
+transform-values-to-transform-commands@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/transform-values-to-transform-commands/-/transform-values-to-transform-commands-1.0.1.tgz#10db1dc04f046902f72d0c4d08d7ae7eb446996e"
+  integrity sha512-7nPGLBS0O/gCkjeBN7kFYziYVpm62EDTVvrCP1xXe1FjWDOCTTbtom1sQBySmMH0V/9JQUlyYSDzTet2OcYsWg==
 
 trim-right@^1.0.1:
   version "1.0.1"
