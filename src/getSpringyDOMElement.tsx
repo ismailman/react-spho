@@ -2,20 +2,11 @@ import React, {forwardRef, useEffect, useLayoutEffect, useRef} from 'react';
 import Spring, {SpringConfig, SpringValueListener} from 'simple-performant-harmonic-oscillator';
 import decomposeDOMMatrix from 'decompose-dommatrix';
 
-import {SpringyComponentPropertyConfig, SPHOProps} from './getSpringyComponent';
+import {DOMSpringConfigMap} from './types';
 import handleForwardedRef from './handleForwardedRef';
-import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES, DEFAULT_UNIT_SUFFIXES} from './domStyleProperties';
+import getSuffix from './getSuffix';
+import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';
 import reconciler from './reconciler';
-
-export type DOMSpringConfigMap = {
-    [key:string]: SpringyComponentPropertyConfig&{
-        onEnterFromValueOffset?: number;
-        onEnterFromValue?: number;
-        onEnterToValue?: number | 'auto';
-        onExitToValue?: number;
-        unitSuffix?: string;
-    };
-}
 
 export default function getSpringyDOMElement(ComponentToWrap: string, configMap: DOMSpringConfigMap = {}){
      
@@ -226,12 +217,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 this._reconcileUpdate = existingUpdate;
             }
 
-            const suffix = 
-                configMap && configMap[property] && configMap[property].unitSuffix ?
-                    configMap[property].unitSuffix :
-                    DEFAULT_UNIT_SUFFIXES[property];
-
-            existingUpdate.values[property] = `${value}${suffix}`;
+            existingUpdate.values[property] = `${value}${getSuffix(configMap, property)}`;
         }
 
         _dealWithPotentialResizeObserver(){
@@ -352,12 +338,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                         };
                     }
 
-                    const suffix = 
-                        configMap && configMap[property] && configMap[property].unitSuffix ?
-                            configMap[property].unitSuffix :
-                            DEFAULT_UNIT_SUFFIXES[property];
-
-                    existingUpdate.values[property] = `${value}${suffix}`;
+                    existingUpdate.values[property] = `${value}${getSuffix(configMap, property)}`;
 
                     if(!existingUpdate.scheduled){
                         existingUpdate.scheduled = Promise.resolve().then(() => {
@@ -369,12 +350,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
                 springsActiveCount++;
                 spring.onAtRest((value) => {
-                    const suffix = 
-                        configMap && configMap[property] && configMap[property].unitSuffix ?
-                            configMap[property].unitSuffix :
-                            DEFAULT_UNIT_SUFFIXES[property];
-
-                    finalValues[property] = `${value}${suffix}`;
+                    finalValues[property] = `${value}${getSuffix(configMap, property)}`;
 
                     spring.end();
                     springsActiveCount--;
