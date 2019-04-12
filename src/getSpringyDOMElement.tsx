@@ -2,15 +2,19 @@ import React, {forwardRef, useEffect, useLayoutEffect, useRef} from 'react';
 import Spring, {SpringConfig, SpringValueListener} from 'simple-performant-harmonic-oscillator';
 import decomposeDOMMatrix from 'decompose-dommatrix';
 
-import {DOMSpringConfigMap} from './types';
-import handleForwardedRef from './handleForwardedRef';
-import getSuffix from './getSuffix';
 import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';
+import {DOMSpringConfigMap} from './types';
+
+import handleForwardedRef from './handleForwardedRef';
+import getUnits from './getUnits';
 import reconciler from './reconciler';
+import {ChildRegisterContext} from './childRegisterContext';
 
 export default function getSpringyDOMElement(ComponentToWrap: string, configMap: DOMSpringConfigMap = {}){
      
      class SpringyDOMElement extends React.PureComponent {
+
+        static contextType = ChildRegisterContext;
 
         _reconcileUpdate;
         _ref;
@@ -24,11 +28,10 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             delete (cleanProps as any).forwardedRef;
             delete (cleanProps as any).onSPHOValueUpdate;
             delete (cleanProps as any).onSPHOValueAtRest;
+            delete (cleanProps as any).springyStyle;
 
             let springyStyle = this.props.springyStyle;
             if(springyStyle || configMap){
-                delete cleanProps.springyStyle;
-
                 if(!springyStyle) {
                     springyStyle = {}; // we have a configMap, so we'll have an artificial springyStyle object
                     
@@ -74,6 +77,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
         }
 
         componentDidMount(){
+            if(this.context) this.context.registerChild(this);
             if(!this._isSecondRender && this._needsSecondRender){
                 this._rerenderToUseTrueSize();
             }
@@ -90,6 +94,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
         }
 
         componentWillUnmount() {
+            if(this.context) this.context.unregisterChild(this);
             for(let spring of this._springMap.values()) {
                 spring.end();
             }
@@ -134,7 +139,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             clone.remove();
         }
 
-        _setupOrUpdateSpringForProperty(property, propValue) {
+        _setupOrUpdateSpringForProperty(property, propValue, overridingFromValue) {
             if(propValue == 'auto') return;
 
             let spring = this._springMap.get(property);
@@ -160,19 +165,24 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                     spring.setSpeed(configMap[property].configWhenGettingSmaller.speed);
                 }                
                 spring.setToValue(propValue);
+                if(overridingFromValue != null) spring.setCurrentValue(overridingFromValue);
                 return;
             }
 
-            let fromValue, config;
+            const fromValue = 
+                overridingFromValue != null ? //if we have an overridingFromValue use that
+                    overridingFromValue :
+                configMap == null ? // if we don't have a configMap then use propValue
+                    propValue :
+                configMap[property].onEnterFromValue != null ? // if we have an onEnterFromValue use that
+                    configMap[property].onEnterFromValue :
+                configMap[property].onEnterFromValueOffset != null ? // if have an onEnterFromValueOffset use that
+                    propValue + configMap[property].onEnterFromValueOffset :
+                    propValue;  // use propValue
 
-            if(configMap[property]){
-                fromValue = 
-                    configMap[property].onEnterFromValue != null ?
-                        configMap[property].onEnterFromValue :
-                    configMap[property].onEnterFromValueOffset == null ? 
-                        propValue :
-                        propValue + configMap[property].onEnterFromValueOffset;
+            let config;
 
+            if(configMap && configMap[property]){
                 if(configMap[property].configWhenGettingBigger && toValue >= fromValue) {
                     config = configMap[property].configWhenGettingBigger;
                 }
@@ -217,7 +227,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 this._reconcileUpdate = existingUpdate;
             }
 
-            existingUpdate.values[property] = `${value}${getSuffix(configMap, property)}`;
+            existingUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
         }
 
         _dealWithPotentialResizeObserver(){
@@ -281,23 +291,36 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
         _handleOnExitIfExists() {
             if(!configMap || !this._ref) return;
-            const propertiesWithOnExitValue = Object.keys(configMap).filter(property => configMap[property].onExitToValue != null);
+            const propertiesWithOnExitToValue = Object.keys(configMap).filter(property => configMap[property].onExitToValue != null);
 
-            if(propertiesWithOnExitValue.length === 0) return;
+            if(propertiesWithOnExitToValue.length === 0) return;
 
             const lastStyle = {...this.props.style};
 
-            const fromValues = {};
             const clone = this._ref.cloneNode(true); //true = deep clone
             clone.style.pointerEvents = 'none';
             this._ref.insertAdjacentElement('beforebegin', clone);
             this._ref.remove();
+
+            const fromValues = {};
+            const propertiesWithOnExitFromValue = propertiesWithOnExitToValue.filter(property => configMap[property].onExitFromValue != null);
+            const propertiesWithoutOnExitFromValue = propertiesWithOnExitToValue.filter(property => configMap[property].onExitFromValue == null);
+
+            propertiesWithOnExitFromValue.forEach(property => {
+                fromValues[property] = configMap[property].onExitFromValue;
+            })
+
             const computedStyle = getComputedStyle(clone);
-            propertiesWithOnExitValue.filter(property => !TRANSFORM_PROPERTIES.includes(property)).forEach(property => {
+            //we set width and height to computed value because we're going to make the element
+            // position absolute which may change height and width
+            clone.style.width = computedStyle.getPropertyValue('width');
+            clone.style.height = computedStyle.getPropertyValue('height');
+
+            propertiesWithoutOnExitFromValue.filter(property => !TRANSFORM_PROPERTIES.includes(property)).forEach(property => {
                 fromValues[property] = parseFloat(computedStyle.getPropertyValue(property)); //use target value for mutable prop
             });
 
-            const transformPropertiesWithOnExitValue = propertiesWithOnExitValue.filter(property => TRANSFORM_PROPERTIES.includes(property));
+            const transformPropertiesWithOnExitValue = propertiesWithoutOnExitFromValue.filter(property => TRANSFORM_PROPERTIES.includes(property));
             if(transformPropertiesWithOnExitValue.length > 0){
                 const domMatrix = new DOMMatrix(computedStyle.getPropertyValue('transform'));
                 const transformValues = decomposeDOMMatrix(domMatrix);
@@ -309,14 +332,15 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                         fromValues[property] = transformValues[property];
                     }
                 }
-            }
+            }            
 
+            clone.style.position = 'absolute';
             clone.insertAdjacentElement('beforebegin', this._ref);
 
             let existingUpdate;
             let springsActiveCount = 0;
             const finalValues = {};
-            for(let property of propertiesWithOnExitValue) {
+            for(let property of propertiesWithOnExitToValue) {
                 const config = configMap[property];
                 let springConfig;
                 if(fromValues[property] > config.onExitToValue && config.configWhenGettingSmaller) {
@@ -338,7 +362,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                         };
                     }
 
-                    existingUpdate.values[property] = `${value}${getSuffix(configMap, property)}`;
+                    existingUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
 
                     if(!existingUpdate.scheduled){
                         existingUpdate.scheduled = Promise.resolve().then(() => {
@@ -350,7 +374,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
                 springsActiveCount++;
                 spring.onAtRest((value) => {
-                    finalValues[property] = `${value}${getSuffix(configMap, property)}`;
+                    finalValues[property] = `${value}${getUnits(configMap, property)}`;
 
                     spring.end();
                     springsActiveCount--;

@@ -23,7 +23,8 @@ export type DOMSpringConfigMap = {
         onEnterFromValueOffset?: number;
         onEnterFromValue?: number;
         onEnterToValue?: number | 'auto';
+        onExitFromValue?: number | 'auto';
         onExitToValue?: number;
-        unitSuffix?: string;
+        units?: string;
     };
 }

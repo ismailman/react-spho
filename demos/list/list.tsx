@@ -1,18 +1,23 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-import {getSpringyDOMElement} from '../../index';
+import {getSpringyDOMElement, SpringyRepositionGroup} from '../../index';
 
 const SDiv = getSpringyDOMElement(
     'div',
     {
-        height: {
-            bounciness: 0.5,
-            onExitToValue: 0
+        scale: {
+            onExitToValue: 2,
+            onExitFromValue: 1
         },
         opacity: {
             onEnterFromValue: 0,
-            onEnterToValue: 1
+            onEnterToValue: 1,
+            onExitToValue: 0
+        },
+        zIndex: {
+            onExitFromValue: 1,
+            onExitToValue: 1
         }
     }
 );
@@ -33,7 +38,12 @@ function List() {
             >
                 Add Item
             </button>
-            <div>
+            <button
+                onClick={() => setItemList(shuffle(itemList))}
+            >
+                Shuffle
+            </button>
+            <SpringyRepositionGroup>
                 {
                     itemList.map((item, index) => (
                         <SDiv 
@@ -49,7 +59,7 @@ function List() {
                         </SDiv>
                     ))
                 }
-            </div>
+            </SpringyRepositionGroup>
             
         </div>
     );
@@ -59,3 +69,22 @@ ReactDOM.render(
     <List />,
     document.getElementById('app')
 );
+
+// taken from https://www.w3resource.com/javascript-exercises/javascript-array-exercise-17.php
+function shuffle(arra1) {
+    var ctr = arra1.length, index;
+    const newArray = [...arra1];
+
+// While there are elements in the array
+    while (ctr > 0) {
+// Pick a random index
+        index = Math.floor(Math.random() * ctr);
+// Decrease ctr by 1
+        ctr--;
+// And swap the last element with it
+        const temp = newArray[ctr];
+        newArray[ctr] = newArray[index];
+        newArray[index] = temp;
+    }
+    return newArray;
+}
