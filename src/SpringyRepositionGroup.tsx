@@ -8,14 +8,6 @@ type Point = {
 };
 
 export default class SpringyRepositionGroup extends AbstractChildRegisterProviderClass {
-    render(): React.ReactNode {
-        return (
-            <ChildRegisterContext.Provider value={this}>
-                {this.props.children}
-            </ChildRegisterContext.Provider>
-        );
-    }
-
     getSnapshotBeforeUpdate() {
         const offsetValues = new Map();
         this._registeredChildren.forEach((node: any) => {

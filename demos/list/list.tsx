@@ -10,9 +10,11 @@ const SDiv = getSpringyDOMElement(
             onExitToValue: 2,
             onExitFromValue: 1
         },
-        opacity: {
+        height: {
             onEnterFromValue: 0,
-            onEnterToValue: 1,
+            onEnterToValue: 'auto'
+        },
+        opacity: {
             onExitToValue: 0
         },
         zIndex: {

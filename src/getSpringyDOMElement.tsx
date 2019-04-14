@@ -10,13 +10,13 @@ import getUnits from './getUnits';
 import reconciler from './reconciler';
 import {ChildRegisterContext} from './childRegisterContext';
 
-export default function getSpringyDOMElement(ComponentToWrap: string, configMap: DOMSpringConfigMap = {}){
+export default function getSpringyDOMElement(ComponentToWrap: string, configMap: DOMSpringConfigMap = {}, styleOnExit: Object = {}){
      
      class SpringyDOMElement extends React.PureComponent {
 
         static contextType = ChildRegisterContext;
 
-        _reconcileUpdate;
+        _reconcileUpdate = {values: {}};
         _ref;
         _resizeObserver;
         _isSecondRender: boolean = false;
@@ -29,6 +29,11 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             delete (cleanProps as any).onSPHOValueUpdate;
             delete (cleanProps as any).onSPHOValueAtRest;
             delete (cleanProps as any).springyStyle;
+            delete (cleanProps as any).sphoIndex;
+
+            if(this.context && this.props.sphoIndex != null){
+                this.context.registerChildIndex(this, this.props.sphoIndex);
+            }
 
             let springyStyle = this.props.springyStyle;
             if(springyStyle || configMap){
@@ -98,6 +103,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             for(let spring of this._springMap.values()) {
                 spring.end();
             }
+            this._springMap.clear();
             this._killResizeObserver();
 
             this._handleOnExitIfExists();
@@ -172,7 +178,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
             const fromValue = 
                 overridingFromValue != null ? //if we have an overridingFromValue use that
                     overridingFromValue :
-                configMap == null ? // if we don't have a configMap then use propValue
+                configMap[property] == null ? // if we don't have a then use propValue
                     propValue :
                 configMap[property].onEnterFromValue != null ? // if we have an onEnterFromValue use that
                     configMap[property].onEnterFromValue :
@@ -182,7 +188,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
             let config;
 
-            if(configMap && configMap[property]){
+            if(configMap[property]){
                 if(configMap[property].configWhenGettingBigger && toValue >= fromValue) {
                     config = configMap[property].configWhenGettingBigger;
                 }
@@ -215,19 +221,14 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
         }
 
         _updateValueForProperty(property, value) {
-            let existingUpdate = this._reconcileUpdate;
-            if(!existingUpdate){
-                existingUpdate = {
-                    scheduled: Promise.resolve().then(() => {
-                        reconciler(this._ref, {...this.props.style}, existingUpdate.values);
-                        this._reconcileUpdate = null;
-                    }),
-                    values: {}
-                };
-                this._reconcileUpdate = existingUpdate;
-            }
+            this._reconcileUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
 
-            existingUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
+            if(!this._reconcileUpdate.scheduled){
+                this._reconcileUpdate.scheduled = Promise.resolve().then(() => {
+                    reconciler(this._ref, {...this.props.style}, this._reconcileUpdate.values);
+                    this._reconcileUpdate.scheduled = null;
+                })
+            }
         }
 
         _dealWithPotentialResizeObserver(){
@@ -295,7 +296,11 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
             if(propertiesWithOnExitToValue.length === 0) return;
 
-            const lastStyle = {...this.props.style};
+            const lastStyle = {...this.props.style, ...styleOnExit};
+
+            if(this.context && this.props.sphoIndex != null){
+                this.context.registerChildIndex(this, this.props.sphoIndex);
+            }
 
             const clone = this._ref.cloneNode(true); //true = deep clone
             clone.style.pointerEvents = 'none';
@@ -332,14 +337,12 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                         fromValues[property] = transformValues[property];
                     }
                 }
-            }            
+            }
 
-            clone.style.position = 'absolute';
             clone.insertAdjacentElement('beforebegin', this._ref);
 
-            let existingUpdate;
+            let existingUpdate = {values: {}};
             let springsActiveCount = 0;
-            const finalValues = {};
             for(let property of propertiesWithOnExitToValue) {
                 const config = configMap[property];
                 let springConfig;
@@ -354,28 +357,21 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 }
 
                 const spring = new Spring(springConfig, {fromValue: fromValues[property], toValue: config.onExitToValue});
+                this._springMap.set(property, spring);
                 
+                springsActiveCount++;
                 spring.onUpdate((value) => {
-                    if(!existingUpdate){
-                        existingUpdate = {
-                            values: {}
-                        };
-                    }
-
                     existingUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
 
                     if(!existingUpdate.scheduled){
                         existingUpdate.scheduled = Promise.resolve().then(() => {
-                            reconciler(clone, {...lastStyle}, {...finalValues, ...existingUpdate.values});
-                            existingUpdate = null;
+                            reconciler(clone, {...lastStyle}, existingUpdate.values);
+                            existingUpdate.scheduled = null;
                         });
                     }
                 });
 
-                springsActiveCount++;
                 spring.onAtRest((value) => {
-                    finalValues[property] = `${value}${getUnits(configMap, property)}`;
-
                     spring.end();
                     springsActiveCount--;
                     if(springsActiveCount === 0) clone.remove();

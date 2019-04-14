@@ -8,12 +8,12 @@ const SDiv = getSpringyDOMElement(
     {
         height: {
             configWhenGettingBigger: {
-                bounciness: 1.1,
+                bounciness: 0.9,
                 speed: 1.2
             },
             configWhenGettingSmaller: {
                 bounciness: 0.5,
-                speed: 1.5
+                speed: 3
             }
         }
     }
