@@ -18,7 +18,7 @@ function Trail() {
             }}
         >
             <SpringFollowGroup properties={[{property: "translateX", offset: 5}, {property: "translateY", offset: 5}]}>
-                <SDiv key="0" sphoIndex={0} springyStyle={{translateX: left + 5, translateY: top + 5}} style={{backgroundColor: 'red'}} />
+                <SDiv key="0" sphoIndex={0} springyStyle={{translateX: left, translateY: top}} style={{backgroundColor: 'red'}} />
                 {
                     arr.map((_, index) => (
                         <SDiv key={index + 1} sphoIndex={index + 1} style={{backgroundColor: 'red'}} />

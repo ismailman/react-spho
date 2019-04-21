@@ -9,7 +9,7 @@ export class AbstractChildRegisterProviderClass extends PureComponent {
 
     static contextType = ChildRegisterContext;
     _registeredChildren: Set<any> = new Set();
-    _orderedChildren: Array<any>;
+    _orderedChildrenGroups: Array<any>;
 
     registerChild(child) {
         this._registeredChildren.add(child);
@@ -22,11 +22,13 @@ export class AbstractChildRegisterProviderClass extends PureComponent {
     }
 
     registerChildIndex(child, index) {
-        this._orderedChildren.splice(index, 0, child);
+        const childrenAtIndex = this._orderedChildrenGroups[index] || [];
+        childrenAtIndex.push(child);
+        this._orderedChildrenGroups[index] = childrenAtIndex;
     }
 
     render(): React.ReactNode {
-        this._orderedChildren = [];
+        this._orderedChildrenGroups = [];
         return (
             <ChildRegisterContext.Provider value={this}>
                 {this.props.children}

@@ -8,19 +8,17 @@ const SDiv = getSpringyDOMElement('div', {
         onEnterFromValue: 0,
         onEnterToValue: 1,
         onExitToValue: 0,
-        speed: 1,
         bounciness: 0.5
     },
     translateY: {
         onEnterFromValue: -10,
         onEnterToValue: 0,
         onExitToValue: -10,
-        bounciness: 0.5,
-        speed: 1
+        bounciness: 0.5
     }
 });
 
-const arr = [1, 2];
+const arr = [1, 2, 3, 4, 5];
 function Trail() {
     const [show, setShow] = useState(false);
 
@@ -37,6 +35,7 @@ function Trail() {
                                 <SDiv 
                                     key={index} 
                                     sphoIndex={index}
+                                    sphoUniqueID={`fader_${index}`}
                                     style={{backgroundColor: 'red', height: '20px', width: '20px', margin: '10px'}}
                                 />
                             ))                

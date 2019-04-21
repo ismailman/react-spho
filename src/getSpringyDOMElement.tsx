@@ -10,6 +10,8 @@ import getUnits from './getUnits';
 import reconciler from './reconciler';
 import {ChildRegisterContext} from './childRegisterContext';
 
+const springyDOMMap: Map<string, any> = new Map();
+
 export default function getSpringyDOMElement(ComponentToWrap: string, configMap: DOMSpringConfigMap = {}, styleOnExit: Object = {}){
      
      class SpringyDOMElement extends React.PureComponent {
@@ -22,6 +24,8 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
         _isSecondRender: boolean = false;
         _needsSecondRender: boolean = false;
         _springMap: Map<string, Spring> = new Map();
+        _removalBlocked: boolean = false;
+        _transitionOutCloneElement = null;
 
         render() {
             const cleanProps = {...this.props};
@@ -33,6 +37,10 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
             if(this.context && this.props.sphoIndex != null){
                 this.context.registerChildIndex(this, this.props.sphoIndex);
+            }
+
+            if(this.props.sphoUniqueID){
+                this._checkAndTakeOverExistingSpringyDOM(this.props.sphoUniqueID);
             }
 
             let springyStyle = this.props.springyStyle;
@@ -100,13 +108,49 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
 
         componentWillUnmount() {
             if(this.context) this.context.unregisterChild(this);
-            for(let spring of this._springMap.values()) {
-                spring.end();
-            }
-            this._springMap.clear();
+            this._cleanUpSprings();
             this._killResizeObserver();
 
             this._handleOnExitIfExists();
+        }
+
+        blockRemoval() {
+            this._removalBlocked = true;
+            return () => {
+                this._removalBlocked = false;
+                if(this._springMap.size === 0 && this._transitionOutCloneElement){
+                    this._transitionOutCloneElement.remove();
+                    if(this.props.sphoUniqueID && springyDOMMap.get(this.props.sphoUniqueID) === this) {
+                        springyDOMMap.delete(this.props.sphoUniqueID);
+                    }
+                }
+            }
+        }
+
+        _checkAndTakeOverExistingSpringyDOM(sphoUniqueID) {
+            const existingSpringyDOM = springyDOMMap.get(sphoUniqueID);
+            if(existingSpringyDOM) {
+                const springMap = existingSpringyDOM._springMap;
+                if(springMap) {
+                    for(let [property, spring] of springMap) {
+                        const springClone = spring.clone();
+                        this._springMap.set(property, springClone);
+                        spring.end();
+
+                        springClone.onUpdate((value: number) => {
+                            this._updateValueForProperty(property, value);
+                            if(this.props.onSPHOValueUpdate) this.props.onSPHOValueUpdate(property, value);
+                        });
+            
+                        springClone.onAtRest((value: number) => {
+                            if(this.props.onSPHOValueAtRest) this.props.onSPHOValueAtRest(property, value);
+                        });
+                    }
+                }
+
+                if(existingSpringyDOM._transitionOutCloneElement) existingSpringyDOM._transitionOutCloneElement.remove();
+            }
+            springyDOMMap.set(sphoUniqueID, this);
         }
 
         _flipAutoPropsIfNecessary(springyStyle) {
@@ -302,7 +346,7 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 this.context.registerChildIndex(this, this.props.sphoIndex);
             }
 
-            const clone = this._ref.cloneNode(true); //true = deep clone
+            const clone = this._transitionOutCloneElement = this._ref.cloneNode(true); //true = deep clone
             clone.style.pointerEvents = 'none';
             this._ref.insertAdjacentElement('beforebegin', clone);
             this._ref.remove();
@@ -359,7 +403,6 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                 const spring = new Spring(springConfig, {fromValue: fromValues[property], toValue: config.onExitToValue});
                 this._springMap.set(property, spring);
                 
-                springsActiveCount++;
                 spring.onUpdate((value) => {
                     existingUpdate.values[property] = `${value}${getUnits(configMap, property)}`;
 
@@ -371,12 +414,31 @@ export default function getSpringyDOMElement(ComponentToWrap: string, configMap:
                     }
                 });
 
-                spring.onAtRest((value) => {
+                const cleanUp = () => {
+                    this._springMap.delete(property);
                     spring.end();
-                    springsActiveCount--;
-                    if(springsActiveCount === 0) clone.remove();
-                });
+                    if(this._springMap.size === 0) {
+                        if(!this._removalBlocked){
+                            clone.remove();
+                            if(this.props.sphoUniqueID && springyDOMMap.get(this.props.sphoUniqueID) === this) {
+                                springyDOMMap.delete(this.props.sphoUniqueID);
+                            }
+                        }
+                        
+                        this._cleanUpSprings();
+                    }
+                };
+
+                spring.onAtRest(cleanUp);
+                spring.onEnd(cleanUp);
             }
+        }
+
+        _cleanUpSprings() {
+            for(let spring of this._springMap.values()) {
+                spring.end();
+            }
+            this._springMap.clear();
         }
      }
 

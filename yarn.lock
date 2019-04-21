@@ -4649,10 +4649,10 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
-simple-performant-harmonic-oscillator@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-2.2.1.tgz#56cf14a04114004dbe496de77e544aa780490742"
-  integrity sha512-Mq+vTJXE2aczI5aQU2meyU6zY/22cg3ym0eXlgMNmKFeDu/4R11/NvEcI3P+j/BlXH3UTeDsn1f/vp6IL77u+Q==
+simple-performant-harmonic-oscillator@^2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-2.4.3.tgz#273bae1a3858c7d9e17cb24a77a4d579f79dacb1"
+  integrity sha512-D+OHHqGLUk95sfYXrE9GKcaC+9TQB9gfX/v1kSJXYDqAIQC9j4jWR5DOXl1V7Rq5Ny1MGhyfKkqzRutIu4yeIw==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"
