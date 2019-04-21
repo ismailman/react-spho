@@ -1,5 +1,5 @@
-import React, {forwardRef, useEffect, useLayoutEffect, useRef} from 'react';
-import Spring, {SpringConfig, SpringValueListener} from 'simple-performant-harmonic-oscillator';
+import React, {forwardRef} from 'react';
+import Spring from 'simple-performant-harmonic-oscillator';
 import decomposeDOMMatrix from 'decompose-dommatrix';
 
 import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';

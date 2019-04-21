@@ -1,12 +1,7 @@
 import React from 'react';
 
 import {ChildRegisterContext, AbstractChildRegisterProviderClass} from './childRegisterContext';
-
-type Point = {
-    x: number;
-    y: number;
-};
-
+ 
 export default class SpringyRepositionGroup extends AbstractChildRegisterProviderClass {
     getSnapshotBeforeUpdate() {
         const offsetValues = new Map();
