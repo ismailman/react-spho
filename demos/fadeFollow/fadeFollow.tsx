@@ -15,6 +15,15 @@ const SDiv = getSpringyDOMElement('div', {
         onEnterToValue: 0,
         onExitToValue: -10,
         bounciness: 0.5
+    },
+    scale: {
+        onEnterFromValue: 2,
+        onEnterToValue: 1,
+        onExitToValue: 2,
+        configWhenGettingSmaller: {
+            bounciness: 0.5,
+            speed: 3
+        }
     }
 });
 
@@ -29,7 +38,7 @@ function Trail() {
                     Toggle
                 </button>
             </div>
-            <SpringFollowGroup properties={["opacity", "translateY"]}>
+            <SpringFollowGroup properties={["opacity", "translateY", "scale"]}>
                 {
                     show && arr.map((_, index) => (
                                 <SDiv 
