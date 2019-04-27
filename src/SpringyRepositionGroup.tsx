@@ -26,8 +26,20 @@ export default class SpringyRepositionGroup extends AbstractChildRegisterProvide
             const newOffsetTop = ref.offsetTop;
             const newOffsetLeft = ref.offsetLeft;
 
-            node._setupOrUpdateSpringForProperty('translateX', 0, offsetValues.get(node).left - newOffsetLeft, 0);
-            node._setupOrUpdateSpringForProperty('translateY', 0, offsetValues.get(node).top - newOffsetTop, 0);
+            const translateXSpring = node._springMap.get('translateX');
+            const existingTranslateXTarget = 
+                translateXSpring ? translateXSpring.getToValue() : 0;
+            const currentTranslateXValue =
+                translateXSpring ? translateXSpring.getCurrentValue() : 0;
+
+            const translateYSpring = node._springMap.get('translateY');
+            const existingTranslateYTarget = 
+                    translateYSpring ? translateYSpring.getToValue() : 0;
+            const currentTranslateYValue =
+                    translateYSpring ? translateYSpring.getCurrentValue() : 0;
+
+            node._setupOrUpdateSpringForProperty('translateX', existingTranslateXTarget, currentTranslateXValue + offsetValues.get(node).left - newOffsetLeft);
+            node._setupOrUpdateSpringForProperty('translateY', existingTranslateYTarget, currentTranslateYValue + offsetValues.get(node).top - newOffsetTop);
         });
     }
 

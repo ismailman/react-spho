@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-import {getSpringyDOMElement, SpringFollowGroup} from '../../index';
+import {getSpringyDOMElement, SpringyFollowGroup} from '../../index';
 
 const SDiv = getSpringyDOMElement('div');
 
@@ -17,14 +17,14 @@ function Trail() {
                 setTop(e.pageY);
             }}
         >
-            <SpringFollowGroup properties={[{property: "translateX", offset: 5}, {property: "translateY", offset: 5}]}>
-                <SDiv key="0" sphoIndex={0} springyStyle={{translateX: left, translateY: top}} style={{backgroundColor: 'red'}} />
+            <SpringyFollowGroup properties={[{property: "translateX", offset: 5}, {property: "translateY", offset: 5}]}>
+                <SDiv key="0" springyFollowGroupIndex={0} springyStyle={{translateX: left, translateY: top}} style={{backgroundColor: 'red'}} />
                 {
                     arr.map((_, index) => (
-                        <SDiv key={index + 1} sphoIndex={index + 1} style={{backgroundColor: 'red'}} />
+                        <SDiv key={index + 1} springyFollowGroupIndex={index + 1} style={{backgroundColor: 'red'}} />
                     ))
                 }
-            </SpringFollowGroup>
+            </SpringyFollowGroup>
             <div style={{transform: `translateX(${left}px) translateY(${top}px)`, backgroundColor: 'blue'}} />
         </div>
     );

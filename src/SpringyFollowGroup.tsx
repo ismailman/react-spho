@@ -11,7 +11,7 @@ function once(fn) {
     };
 }
 
-export default class SpringFollowGroup extends AbstractChildRegisterProviderClass {
+export default class SpringyFollowGroup extends AbstractChildRegisterProviderClass {
 
     _unregisterFunctions = [];
 

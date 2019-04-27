@@ -31,7 +31,7 @@ function Trail() {
                                     <SDiv 
                                         key={`${row}_${column}`}
                                         className="cell"
-                                        sphoIndex={Math.max(Math.abs(row-centerRow), Math.abs(column-centerColumn))}
+                                        springFollowGroupIndex={Math.max(Math.abs(row-centerRow), Math.abs(column-centerColumn))}
                                         springyStyle={{scale: small ? 0.5 : 1}}
                                         onClick={e => {
                                             setCenterRow(row);

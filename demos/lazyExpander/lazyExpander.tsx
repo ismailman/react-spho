@@ -35,7 +35,7 @@ function LazyExpander() {
                     <SDiv 
                         springyStyle={{height: expanded ? 'auto': 0}}
                         style={{backgroundColor: 'red', width: '200px', overflow: 'hidden'}}
-                        onSPHOValueAtRest={(property, value) => {
+                        onSpringyPropertyValueAtRest={(property, value) => {
                             if(property !== 'height' || value !== 0) return;
                             setIsElementAdded(false);
                         }}

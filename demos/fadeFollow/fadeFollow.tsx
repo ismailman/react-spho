@@ -43,8 +43,8 @@ function Trail() {
                     show && arr.map((_, index) => (
                                 <SDiv 
                                     key={index} 
-                                    sphoIndex={index}
-                                    sphoUniqueID={`fader_${index}`}
+                                    springFollowGroupIndex={index}
+                                    globalUniqueIDForSpringReuse={`fader_${index}`}
                                     style={{backgroundColor: 'red', height: '20px', width: '20px', margin: '10px'}}
                                 />
                             ))                

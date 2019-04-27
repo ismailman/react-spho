@@ -17,31 +17,28 @@ export type DOMSpringConfigMap = {
     [key:string]: SpringPropertyConfig;
 }
 
-export type SpringyProps = {
+export type InternalSpringyProps = {
     forwardedRef: any;
+    ComponentToWrap: string;
+    configMap?: DOMSpringConfigMap;
+    styleOnExit?: {[key: string]: string | number};
     globalUniqueIDForSpringReuse?: string;
     onSpringyPropertyValueUpdate?: (property: string, value: number) => void;
     onSpringyPropertyValueAtRest?: (property: string, value: number) => void;
-    springFollowGroupIndex?: number;
+    springyFollowGroupIndex?: number;
     springyStyle?: {[key:string]: SpringyStyleValue};
 };
 
-export type Intrinsics = keyof JSX.IntrinsicElements;
+type SpringyProps = Pick<InternalSpringyProps, Exclude<keyof InternalSpringyProps, 'forwardedRef' | 'ComponentToWrap'>>;
 
-type Omit<T, K> = Pick<T, Exclude<keyof T, keyof K>>;
+export type SpringyDOMWrapper = 
+    <T extends keyof JSX.IntrinsicElements>(ComponentToWrap: T, configMap?: DOMSpringConfigMap, styleOnExit?: JSX.IntrinsicElements[T]) => React.ComponentClass<SpringyProps & JSX.IntrinsicElements[T]>;
 
-
-export type SpringyDOMWrapper<T extends Intrinsics> = 
-    (ComponentToWrap: T, configMap: DOMSpringConfigMap, styleOnExit: Object) => React.ComponentClass<SpringyProps & JSX.IntrinsicElements[T]>;
-
-
-export type PropsWithoutSpringyAttributes<T> = Omit<T, SpringyProps>;
 
 
 /* 
     resize observer type from https://github.com/que-etc/resize-observer-polyfill/blob/master/src/index.d.ts
 */
-
 interface DOMRectReadOnly {
     readonly x: number;
     readonly y: number;

@@ -6,22 +6,18 @@ import {getSpringyDOMElement, SpringyRepositionGroup} from '../../index';
 const SDiv = getSpringyDOMElement(
     'div',
     {
-        scale: {
-            onExitToValue: 2,
-            onExitFromValue: 1
-        },
-        height: {
-            onEnterFromValue: 0,
-            onEnterToValue: 'auto'
-        },
-        opacity: {
-            onExitToValue: 0
-        },
-        zIndex: {
-            onExitFromValue: 1,
-            onExitToValue: 1
+        translateX: {
+            onEnterFromValue: -110,
+            onEnterToValue: 0,
+            onExitFromValue: 0,
+            onExitToValue: -110,
+            units: '%'
         }
-    }
+    },
+    ({
+        position: 'absolute',
+        zIndex: 1
+    } as React.CSSProperties)
 );
 
 
