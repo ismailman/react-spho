@@ -1,8 +1,7 @@
-import React from 'react';
-
-import {ChildRegisterContext, AbstractChildRegisterProviderClass} from './childRegisterContext';
+import {AbstractChildRegisterProviderClass} from './childRegisterContext';
+import SpringyDOMElement from './SpringyDOMElement';
  
-export default class SpringyRepositionGroup extends AbstractChildRegisterProviderClass {
+export default class SpringyRepositionGroup extends AbstractChildRegisterProviderClass<{}> {
     getSnapshotBeforeUpdate() {
         const offsetValues = new Map();
         this._registeredChildren.forEach((node: any) => {
@@ -17,7 +16,7 @@ export default class SpringyRepositionGroup extends AbstractChildRegisterProvide
         return offsetValues;
     }
 
-    componentDidUpdate(prevProps, prevState, offsetValues) {
+    componentDidUpdate(prevProps, prevState, offsetValues: Map<SpringyDOMElement, {top: number, left: number}>) {
         if(!offsetValues) return;
         this._registeredChildren.forEach((node: any) => {
             const ref = node._ref;

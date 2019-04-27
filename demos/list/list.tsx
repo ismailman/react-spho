@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, cloneElement} from 'react';
 import ReactDOM from 'react-dom';
 
 import {getSpringyDOMElement, SpringyRepositionGroup} from '../../index';
@@ -14,10 +14,14 @@ const SDiv = getSpringyDOMElement(
             units: '%'
         }
     },
-    ({
-        position: 'absolute',
-        zIndex: 1
-    } as React.CSSProperties)
+    (node) => {
+        return {
+            position: 'absolute',
+            zIndex: 1,
+            top: node.offsetTop,
+            left: node.offsetLeft
+        } as React.CSSProperties;
+    }
 );
 
 

@@ -80,16 +80,12 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         if(!this._isSecondRender && this._needsSecondRender){
             this._rerenderToUseTrueSize();
         }
-
-        this._dealWithPotentialResizeObserver();
     }
 
     componentDidUpdate(){
         if(!this._isSecondRender && this._needsSecondRender){
             this._rerenderToUseTrueSize();
         }
-
-        this._dealWithPotentialResizeObserver();
     }
 
     componentWillUnmount() {
@@ -187,21 +183,14 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
 
         if(!this._ref) return;
 
-        // generate clone and replace ref with clone so it has the exact same positioning and such
-        const clone = this._ref.cloneNode(true) as HTMLElement; //true = deep clone
-        this._ref.insertAdjacentElement('beforebegin', clone);
-        this._ref.remove();
-
         // apply latest styles
-        reconciler(clone, {...(this.props as any).style}, springyStyle);
+        reconciler(this._ref, {...(this.props as any).style}, springyStyle);
 
         // get the computed styles and clean up
-        const computedStyle = getComputedStyle(clone);
+        const computedStyle = getComputedStyle(this._ref);
         propsThatAreAuto.forEach(property => {
             springyStyle[property] = parseFloat(computedStyle.getPropertyValue(property)); //use target value for mutable prop
         });
-        clone.insertAdjacentElement('beforebegin', this._ref);
-        clone.remove();
     }
 
     _setupOrUpdateSpringForProperty(property: string, propValue: number | 'auto', overridingFromValue?: number) {
@@ -268,6 +257,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
     }
 
     _dealWithPotentialResizeObserver(springyStyle: {[key: string]: number | 'auto'}){
+        if(!this._ref) return;
         const propsThatAreSpringy = Object.keys(springyStyle);
         const springyPropsThatCanBeAuto = propsThatAreSpringy.filter(property => AUTO_PROPERTIES.includes(property));
         const resizableSpringyAutoProperties = springyPropsThatCanBeAuto.filter(property => RESIZE_PROPERTIES.includes(property));
@@ -348,7 +338,14 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         clone.style.width = computedStyle.getPropertyValue('width');
         clone.style.height = computedStyle.getPropertyValue('height');
 
-        if(this.props.styleOnExit) reconciler(clone, lastStyle, this.props.styleOnExit);
+        if(this.props.styleOnExit) {
+            let styleOnExit = this.props.styleOnExit;
+            if(typeof styleOnExit === 'function') {
+                styleOnExit = styleOnExit(clone);
+            }
+            
+            reconciler(clone, lastStyle, styleOnExit);
+        }
 
         propertiesWithoutOnExitFromValue.filter(property => !TRANSFORM_PROPERTIES.includes(property)).forEach(property => {
             fromValues[property] = parseFloat(computedStyle.getPropertyValue(property)); //use target value for mutable prop

@@ -30,9 +30,11 @@ export type InternalSpringyProps = {
 };
 
 type SpringyProps = Pick<InternalSpringyProps, Exclude<keyof InternalSpringyProps, 'forwardedRef' | 'ComponentToWrap'>>;
+type StyleOnExitFunction<T extends keyof JSX.IntrinsicElements> = (node: HTMLElement) => JSX.IntrinsicElements[T];
+export type StyleOnExit<T extends keyof JSX.IntrinsicElements> = JSX.IntrinsicElements[T] | StyleOnExitFunction<T>;
 
 export type SpringyDOMWrapper = 
-    <T extends keyof JSX.IntrinsicElements>(ComponentToWrap: T, configMap?: DOMSpringConfigMap, styleOnExit?: JSX.IntrinsicElements[T]) => React.ComponentClass<SpringyProps & JSX.IntrinsicElements[T]>;
+    <T extends keyof JSX.IntrinsicElements>(ComponentToWrap: T, configMap?: DOMSpringConfigMap, styleOnExit?: StyleOnExit<T>) => React.ComponentClass<SpringyProps & JSX.IntrinsicElements[T]>;
 
 
 

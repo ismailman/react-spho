@@ -2,7 +2,7 @@ import React from 'react';
 
 import {AbstractChildRegisterProviderClass} from './childRegisterContext';
 
-function once(fn) {
+function once(fn: Function) {
     let hasBeenCalled = false;
     return () => {
         if(hasBeenCalled) return;
@@ -11,7 +11,16 @@ function once(fn) {
     };
 }
 
-export default class SpringyFollowGroup extends AbstractChildRegisterProviderClass {
+type PropertyConfig = {
+    property: string;
+    offset: number;
+};
+
+type Props = {
+    properties: Array<string | PropertyConfig>
+};
+
+export default class SpringyFollowGroup extends AbstractChildRegisterProviderClass<Props> {
 
     _unregisterFunctions = [];
 

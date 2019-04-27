@@ -9,7 +9,7 @@ const SDiv = getSpringyDOMElement(
         height: {
             bounciness: 0.5,
             speed: 1.5,
-            initialFromValue: 200
+            onEnterFromValue: 200
         }
     }
 );
