@@ -1,16 +1,16 @@
-import React, {forwardRef} from 'react';
+import React from 'react';
 import Spring from 'simple-performant-harmonic-oscillator';
 import decomposeDOMMatrix from 'decompose-dommatrix';
 
 import {InternalSpringyProps} from './types';
 
-import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './domStyleProperties';
+import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './helpers/domStyleProperties';
+import getConfig from './helpers/getConfig';
+import getUnits from './helpers/getUnits';
+import handleForwardedRef from './helpers/handleForwardedRef';
+import reconciler from './helpers/reconciler';
 
-import {ChildRegisterContext} from './childRegisterContext';
-import getConfig from './getConfig';
-import getUnits from './getUnits';
-import handleForwardedRef from './handleForwardedRef';
-import reconciler from './reconciler';
+import {ChildRegisterContext} from './springyGroups/childRegisterContext';
 
 type ReconcileScheduler = {
     values: {[key: string]: string};
@@ -62,6 +62,9 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
                 ref={ref => {
                     this._ref = ref;
                     handleForwardedRef(ref, this.props.forwardedRef)
+                    if(this.props.instanceRef){
+                        handleForwardedRef(this, this.props.instanceRef);
+                    }
                 }}
             > {
                 this.props.children && (
@@ -107,6 +110,22 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
                 }
             }
         }
+    }
+
+    getSpringForProperty(property: string): Spring | null {
+        return this._springMap.get(property);
+    }
+
+    isUnmounting(): boolean {
+        return Boolean(this._transitionOutCloneElement);
+    }
+
+    setSpringToValueForProperty(property: string, toValue: number | 'auto', overridingFromValue?: number) {
+        this._setupOrUpdateSpringForProperty(property, toValue, overridingFromValue);
+    }
+
+    getDOMNode(): HTMLElement | null {
+        return this._ref;
     }
 
     _checkAndTakeOverExistingSpringyDOM(globalUniqueIDForSpringReuse) {

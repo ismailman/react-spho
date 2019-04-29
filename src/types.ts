@@ -1,4 +1,5 @@
 import {SpringConfig} from 'simple-performant-harmonic-oscillator';
+import SpringyDOMElement from './SpringyDOMElement';
 
 export type SpringyStyleValue = number | 'auto';
 
@@ -21,6 +22,7 @@ export type InternalSpringyProps = {
     forwardedRef: any;
     ComponentToWrap: string;
     configMap?: DOMSpringConfigMap;
+    instanceRef?: (ref: SpringyDOMElement) => void;
     styleOnExit?: {[key: string]: string | number};
     globalUniqueIDForSpringReuse?: string;
     onSpringyPropertyValueUpdate?: (property: string, value: number) => void;

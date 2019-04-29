@@ -1,15 +1,15 @@
 import {AbstractChildRegisterProviderClass} from './childRegisterContext';
-import SpringyDOMElement from './SpringyDOMElement';
+import SpringyDOMElement from '../SpringyDOMElement';
  
 export default class SpringyRepositionGroup extends AbstractChildRegisterProviderClass<{}> {
     getSnapshotBeforeUpdate() {
         const offsetValues = new Map();
         this._registeredChildren.forEach((node: any) => {
-            const ref = node._ref;
-            if(!ref) return;
+            const domNode = node.getDOMNode();
+            if(!domNode) return;
             offsetValues.set(node, {
-                top: ref.offsetTop,
-                left: ref.offsetLeft
+                top: domNode.offsetTop,
+                left: domNode.offsetLeft
             });
         });
 
@@ -18,12 +18,12 @@ export default class SpringyRepositionGroup extends AbstractChildRegisterProvide
 
     componentDidUpdate(prevProps, prevState, offsetValues: Map<SpringyDOMElement, {top: number, left: number}>) {
         if(!offsetValues) return;
-        this._registeredChildren.forEach((node: any) => {
-            const ref = node._ref;
-            if(!ref || !offsetValues.get(node)) return;
+        this._registeredChildren.forEach((node: SpringyDOMElement) => {
+            const domNode = node.getDOMNode();
+            if(!domNode || !offsetValues.get(node)) return;
 
-            const newOffsetTop = ref.offsetTop;
-            const newOffsetLeft = ref.offsetLeft;
+            const newOffsetTop = domNode.offsetTop;
+            const newOffsetLeft = domNode.offsetLeft;
 
             const translateXSpring = node._springMap.get('translateX');
             const existingTranslateXTarget = 
@@ -37,8 +37,8 @@ export default class SpringyRepositionGroup extends AbstractChildRegisterProvide
             const currentTranslateYValue =
                     translateYSpring ? translateYSpring.getCurrentValue() : 0;
 
-            node._setupOrUpdateSpringForProperty('translateX', existingTranslateXTarget, currentTranslateXValue + offsetValues.get(node).left - newOffsetLeft);
-            node._setupOrUpdateSpringForProperty('translateY', existingTranslateYTarget, currentTranslateYValue + offsetValues.get(node).top - newOffsetTop);
+            node.setSpringToValueForProperty('translateX', existingTranslateXTarget, currentTranslateXValue + offsetValues.get(node).left - newOffsetLeft);
+            node.setSpringToValueForProperty('translateY', existingTranslateYTarget, currentTranslateYValue + offsetValues.get(node).top - newOffsetTop);
         });
     }
 

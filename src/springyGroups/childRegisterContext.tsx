@@ -1,5 +1,5 @@
 import React, {createContext, PureComponent} from 'react';
-import SpringyDOMElement from './SpringyDOMElement';
+import SpringyDOMElement from '../SpringyDOMElement';
 
 export const ChildRegisterContext = createContext({
     registerChild: (child: SpringyDOMElement) => void 0,
