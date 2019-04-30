@@ -17,6 +17,8 @@ type ReconcileScheduler = {
     scheduled?: Promise<void> | null;
 };
 
+type CustomValueMapper = (value: number) => number;
+
 const springyDOMMap: Map<string, SpringyDOMElement> = new Map();
 
 export default class SpringyDOMElement extends React.PureComponent<InternalSpringyProps> {
@@ -41,11 +43,11 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         delete (cleanProps as any).globalUniqueIDForSpringReuse;
         delete (cleanProps as any).onSpringyPropertyValueAtRest;
         delete (cleanProps as any).onSpringyPropertyValueUpdate;
-        delete (cleanProps as any).springyFollowGroupIndex;
+        delete (cleanProps as any).springyOrderedIndex;
         delete (cleanProps as any).springyStyle;
 
-        if(this.context && this.props.springyFollowGroupIndex != null){
-            this.context.registerChildIndex(this, this.props.springyFollowGroupIndex);
+        if(this.context && this.props.springyOrderedIndex != null){
+            this.context.registerChildIndex(this, this.props.springyOrderedIndex);
         }
 
         if(this.props.globalUniqueIDForSpringReuse){
@@ -120,8 +122,8 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         return Boolean(this._transitionOutCloneElement);
     }
 
-    setSpringToValueForProperty(property: string, toValue: number | 'auto', overridingFromValue?: number) {
-        this._setupOrUpdateSpringForProperty(property, toValue, overridingFromValue);
+    setSpringToValueForProperty(property: string, toValue: number | 'auto', overridingFromValue?: number, customValueMapper?: CustomValueMapper) {
+        this._setupOrUpdateSpringForProperty(property, toValue, overridingFromValue, customValueMapper);
     }
 
     getDOMNode(): HTMLElement | null {
@@ -212,7 +214,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         });
     }
 
-    _setupOrUpdateSpringForProperty(property: string, propValue: number | 'auto', overridingFromValue?: number) {
+    _setupOrUpdateSpringForProperty(property: string, propValue: number | 'auto', overridingFromValue?: number, customValueMapper?: CustomValueMapper) {
         if(propValue == 'auto') return;
 
         const configMap = this.props.configMap;
@@ -228,36 +230,45 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
 
         // spring has already been initialized and we're just updating values
         if(spring != null){
-            const config = getConfig(configMap[property], spring.getToValue(), toValue);
-            spring.setBounciness(config.bounciness);
-            spring.setSpeed(config.speed);                
+            if(configMap){
+                const config = getConfig(configMap[property], spring.getToValue(), toValue) : ;
+                spring.setBounciness(config.bounciness);
+                spring.setSpeed(config.speed);
+            }
+            
             spring.setToValue(propValue);
             if(overridingFromValue != null) spring.setCurrentValue(overridingFromValue);
         }
         else {
             const fromValue = 
                 overridingFromValue != null ? overridingFromValue : //if we have an overridingFromValue use that
-                configMap[property] == null ? propValue : // if we don't have a then use propValue
+                configMap == null || configMap[property] == null ? propValue : // if we don't have a then use propValue
                 configMap[property].onEnterFromValue != null ? configMap[property].onEnterFromValue : // if we have an onEnterFromValue use that
                 configMap[property].onEnterFromValueOffset != null ? // if have an onEnterFromValueOffset use that
                     propValue + configMap[property].onEnterFromValueOffset : propValue;  // use propValue
 
             spring = new Spring(
-                getConfig(configMap[property], fromValue, toValue),
+                configMap ? getConfig(configMap[property], fromValue, toValue) : {},
                 {fromValue, toValue}
             );
 
-            this._listenToSpring(spring, property);
+            this._listenToSpring(spring, property, customValueMapper);
         }
     }
 
-    _listenToSpring(spring: Spring, property: string) {
+    _listenToSpring(spring: Spring, property: string, customValueMapper?: CustomValueMapper) {
         spring.onUpdate((value: number) => {
+            if(customValueMapper) {
+                value = customValueMapper(value);
+            }
             this._updateValueForProperty(property, value);
             if(this.props.onSpringyPropertyValueUpdate) this.props.onSpringyPropertyValueUpdate(property, value);
         });
 
         spring.onAtRest((value: number) => {
+            if(customValueMapper) {
+                value = customValueMapper(value);
+            }
             if(this.props.onSpringyPropertyValueAtRest) this.props.onSpringyPropertyValueAtRest(property, value);
         });
 
@@ -334,8 +345,8 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
 
         const lastStyle = {...(this.props as any).style};
 
-        if(this.context && this.props.springyFollowGroupIndex != null){
-            this.context.registerChildIndex(this, this.props.springyFollowGroupIndex);
+        if(this.context && this.props.springyOrderedIndex != null){
+            this.context.registerChildIndex(this, this.props.springyOrderedIndex);
         }
 
         const clone = this._transitionOutCloneElement = this._ref.cloneNode(true) as HTMLElement; //true = deep clone

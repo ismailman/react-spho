@@ -27,7 +27,7 @@ export type InternalSpringyProps = {
     globalUniqueIDForSpringReuse?: string;
     onSpringyPropertyValueUpdate?: (property: string, value: number) => void;
     onSpringyPropertyValueAtRest?: (property: string, value: number) => void;
-    springyFollowGroupIndex?: number;
+    springyOrderedIndex?: number;
     springyStyle?: {[key:string]: SpringyStyleValue};
 };
 

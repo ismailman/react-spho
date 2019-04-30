@@ -43,7 +43,7 @@ function Trail() {
                     show && arr.map((_, index) => (
                                 <SDiv 
                                     key={index} 
-                                    springyFollowGroupIndex={index}
+                                    springyOrderedIndex={index}
                                     globalUniqueIDForSpringReuse={`fader_${index}`}
                                     style={{backgroundColor: 'red', height: '20px', width: '20px', margin: '10px'}}
                                 />

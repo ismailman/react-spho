@@ -18,10 +18,10 @@ function Trail() {
             }}
         >
             <SpringyFollowGroup properties={[{property: "translateX", offset: 5}, {property: "translateY", offset: 5}]}>
-                <SDiv key="0" springyFollowGroupIndex={0} springyStyle={{translateX: left, translateY: top}} style={{backgroundColor: 'red'}} />
+                <SDiv key="0" springyOrderedIndex={0} springyStyle={{translateX: left, translateY: top}} style={{backgroundColor: 'red'}} />
                 {
                     arr.map((_, index) => (
-                        <SDiv key={index + 1} springyFollowGroupIndex={index + 1} style={{backgroundColor: 'red'}} />
+                        <SDiv key={index + 1} springyOrderedIndex={index + 1} style={{backgroundColor: 'red'}} />
                     ))
                 }
             </SpringyFollowGroup>

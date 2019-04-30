@@ -3,7 +3,8 @@ import SpringyDOMElement from '../SpringyDOMElement';
 
 export const ChildRegisterContext = createContext({
     registerChild: (child: SpringyDOMElement) => void 0,
-    unregisterChild: (child: SpringyDOMElement) => void 0
+    unregisterChild: (child: SpringyDOMElement) => void 0,
+    registerChildIndex: (child: SpringyDOMElement, index: number) => void 0
 });
 
 export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
@@ -26,6 +27,7 @@ export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
         const childrenAtIndex = this._orderedChildrenGroups[index] || [];
         childrenAtIndex.push(child);
         this._orderedChildrenGroups[index] = childrenAtIndex;
+        if(this.context) this.context.registerChildIndex(child, index);
     }
 
     render(): React.ReactNode {
@@ -37,4 +39,21 @@ export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
         );
     }
 
+    getOrderedChildrenAsFlatArray(): Array<SpringyDOMElement> {
+        return this._orderedChildrenGroups.length > 0 ?
+                    flatten(this._orderedChildrenGroups) :
+                    [...this._registeredChildren];
+    }
+
+}
+
+
+function flatten<T>(arrayOfArrays: Array<Array<T>>): Array<T> {
+    let arr = [];
+    for(let group of arrayOfArrays) {
+        for(let item of group) {
+            arr.push(item);
+        }
+    }
+    return arr;
 }

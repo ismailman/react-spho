@@ -49,14 +49,16 @@ export default class SpringyFollowGroup extends AbstractChildRegisterProviderCla
                 typeof propertyConfig === 'string' ?
                     propertyConfig : propertyConfig.property;
 
-            let lastChild: SpringyDOMElement | null = null;
+            let lastGroupChild: SpringyDOMElement | null = null;
             
             this._orderedChildrenGroups.filter(Boolean).forEach(childGroup => {
                 childGroup.forEach((child, index) => {
                     const isUnmounting = child.isUnmounting();
-                    if(lastChild != null){
-                        const parentSpring = lastChild.getSpringForProperty(property);
+                    if(lastGroupChild != null){
+                        const parentSpring = lastGroupChild.getSpringForProperty(property);
                         if(parentSpring) {
+                            child.setSpringToValueForProperty(property, parentSpring.getCurrentValue() + offset, parentSpring.getCurrentValue() + offset);
+
                             this._unregisterFunctions.push(
                                 parentSpring.onUpdate(value => {
                                     child.setSpringToValueForProperty(property, value + offset);
@@ -64,7 +66,7 @@ export default class SpringyFollowGroup extends AbstractChildRegisterProviderCla
                             );
                             
                             if(isUnmounting) {
-                                const childSpring = child._springMap.get(property);
+                                const childSpring = child.getSpringForProperty(property);
                                 if(childSpring) {
                                     const unblock = childSpring.blockSpringFromResting();
                                     this._unregisterFunctions.push(unblock);
@@ -77,10 +79,10 @@ export default class SpringyFollowGroup extends AbstractChildRegisterProviderCla
                         }
                     }
                     
-                    if(index === 0) lastChild = child;
+                    if(index === childGroup.length - 1) lastGroupChild = child;
 
                     if(isUnmounting) {
-                        const childSpring = child._springMap.get(property);
+                        const childSpring = child.getSpringForProperty(property);
                         if(childSpring) {
                             const unblockRemoval = child.blockRemoval();
                             this._unregisterFunctions.push(unblockRemoval);
