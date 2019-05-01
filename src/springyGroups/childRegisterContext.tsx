@@ -39,12 +39,6 @@ export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
         );
     }
 
-    getOrderedChildrenAsFlatArray(): Array<SpringyDOMElement> {
-        return this._orderedChildrenGroups.length > 0 ?
-                    flatten(this._orderedChildrenGroups) :
-                    [...this._registeredChildren];
-    }
-
 }
 
 

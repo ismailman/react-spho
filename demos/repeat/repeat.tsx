@@ -76,7 +76,6 @@ function Repeater() {
                 <div className="spinning">
                     <SpringyRepeater
                         direction="from-beginning-each-time"
-                        delayStartBetweenChildren={200}
                         springyRepeaterStyles={{
                             rotate: {
                                 from: 0,

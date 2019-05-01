@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "decompose-dommatrix": "^1.0.3",
-    "simple-performant-harmonic-oscillator": "^2.4.3",
+    "simple-performant-harmonic-oscillator": "^2.5.0",
     "transform-values-to-transform-commands": "^1.0.1"
   },
   "devDependencies": {

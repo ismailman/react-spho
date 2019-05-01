@@ -123,7 +123,13 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
     }
 
     setSpringToValueForProperty(property: string, toValue: number | 'auto', overridingFromValue?: number, customValueMapper?: CustomValueMapper) {
-        this._setupOrUpdateSpringForProperty(property, toValue, overridingFromValue, customValueMapper);
+        this._setupOrUpdateSpringForProperty(property, toValue, overridingFromValue);
+
+        if(customValueMapper) {
+            const spring = this.getSpringForProperty(property);
+            if(!spring) throw new Error('spring should have been created');
+            spring.setValueMapper(customValueMapper);
+        }
     }
 
     getDOMNode(): HTMLElement | null {
@@ -214,7 +220,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         });
     }
 
-    _setupOrUpdateSpringForProperty(property: string, propValue: number | 'auto', overridingFromValue?: number, customValueMapper?: CustomValueMapper) {
+    _setupOrUpdateSpringForProperty(property: string, propValue: number | 'auto', overridingFromValue?: number) {
         if(propValue == 'auto') return;
 
         const configMap = this.props.configMap;
@@ -231,7 +237,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         // spring has already been initialized and we're just updating values
         if(spring != null){
             if(configMap){
-                const config = getConfig(configMap[property], spring.getToValue(), toValue) : ;
+                const config = getConfig(configMap[property], spring.getToValue(), toValue);
                 spring.setBounciness(config.bounciness);
                 spring.setSpeed(config.speed);
             }
@@ -252,23 +258,17 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
                 {fromValue, toValue}
             );
 
-            this._listenToSpring(spring, property, customValueMapper);
+            this._listenToSpring(spring, property);
         }
     }
 
-    _listenToSpring(spring: Spring, property: string, customValueMapper?: CustomValueMapper) {
+    _listenToSpring(spring: Spring, property: string) {
         spring.onUpdate((value: number) => {
-            if(customValueMapper) {
-                value = customValueMapper(value);
-            }
             this._updateValueForProperty(property, value);
             if(this.props.onSpringyPropertyValueUpdate) this.props.onSpringyPropertyValueUpdate(property, value);
         });
 
         spring.onAtRest((value: number) => {
-            if(customValueMapper) {
-                value = customValueMapper(value);
-            }
             if(this.props.onSpringyPropertyValueAtRest) this.props.onSpringyPropertyValueAtRest(property, value);
         });
 
@@ -371,7 +371,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         if(this.props.styleOnExit) {
             let styleOnExit = this.props.styleOnExit;
             if(typeof styleOnExit === 'function') {
-                styleOnExit = styleOnExit(clone);
+                styleOnExit = (styleOnExit as any)(clone);
             }
             
             reconciler(clone, lastStyle, styleOnExit);

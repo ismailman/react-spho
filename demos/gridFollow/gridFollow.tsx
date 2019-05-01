@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-import {getSpringyDOMElement, SpringFollowGroup} from '../../index';
+import {getSpringyDOMElement, SpringyFollowGroup, SpringyRepeater} from '../../index';
 
 const SDiv = getSpringyDOMElement('div');
 
@@ -22,29 +22,57 @@ function Trail() {
                     Width: <input value={width} onChange={e => setWidth(parseInt(e.target.value)) }/>
                 </div>
             </div>
-            <SpringFollowGroup properties={["scale"]}>
+            <SpringyFollowGroup properties={["scale"]}>
                 {
                     [...Array(length)].map((_, row) => (
                         <div className="row" key={row}>
                             {
-                                [...Array(width)].map((_, column) => (
-                                    <SDiv 
-                                        key={`${row}_${column}`}
-                                        className="cell"
-                                        springFollowGroupIndex={Math.max(Math.abs(row-centerRow), Math.abs(column-centerColumn))}
-                                        springyStyle={{scale: small ? 0.5 : 1}}
-                                        onClick={e => {
-                                            setCenterRow(row);
-                                            setCenterColumn(column);
-                                            setSmall(!small);
-                                        }}
-                                    />
-                                ))
+                                [...Array(width)].map((_, column) => {
+                                    if(row === centerRow && column === centerColumn) {
+                                        return (
+                                            <SpringyRepeater
+                                                key={`${row}_${column}`}
+                                                numberOfTimesToRepeat={1}
+                                                direction="back-and-forth"
+                                                springyRepeaterStyles={{
+                                                    scale: {
+                                                        from: 1,
+                                                        to: 0.2
+                                                    }
+                                                }}
+                                            >
+                                                <SDiv 
+                                                    className="cell"
+                                                    springyOrderedIndex={Math.max(Math.abs(row-centerRow), Math.abs(column-centerColumn))}
+                                                    onClick={e => {
+                                                        setCenterRow(row);
+                                                        setCenterColumn(column);
+                                                        setSmall(!small);
+                                                    }}
+                                                />
+                                            </SpringyRepeater>
+                                        );
+                                    }
+                                    else {
+                                        return (
+                                            <SDiv 
+                                                key={`${row}_${column}`}
+                                                className="cell"
+                                                springyOrderedIndex={Math.max(Math.abs(row-centerRow), Math.abs(column-centerColumn))}
+                                                onClick={e => {
+                                                    setCenterRow(row);
+                                                    setCenterColumn(column);
+                                                    setSmall(!small);
+                                                }}
+                                            />
+                                        );
+                                    }
+                                })
                             }
                         </div>
                     ))
                 }
-            </SpringFollowGroup>
+            </SpringyFollowGroup>
         </div>
     );
 }
