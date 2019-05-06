@@ -1,4 +1,4 @@
-import {DOMSpringConfigMap} from './types';
+import {DOMSpringConfigMap} from '../types';
 import {DEFAULT_UNIT_SUFFIXES} from './domStyleProperties';
 
 export default function getUnits(configMap: DOMSpringConfigMap, property: string): string {

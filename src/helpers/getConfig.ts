@@ -1,5 +1,5 @@
 import {SpringConfig} from 'simple-performant-harmonic-oscillator';
-import {SpringPropertyConfig} from './types';
+import {SpringPropertyConfig} from '../types';
 
 export default function getConfig(config: SpringPropertyConfig | null | undefined, oldToValue: number, newToValue: number): SpringConfig | null {
     let springConfig: SpringConfig = {};

@@ -38,7 +38,9 @@ export type StyleOnExit<T extends keyof JSX.IntrinsicElements> = JSX.IntrinsicEl
 export type SpringyDOMWrapper = 
     <T extends keyof JSX.IntrinsicElements>(ComponentToWrap: T, configMap?: DOMSpringConfigMap, styleOnExit?: StyleOnExit<T>) => React.ComponentClass<SpringyProps & JSX.IntrinsicElements[T]>;
 
-
+export type StyleObject = {
+    [key: string]: number | string
+};
 
 /* 
     resize observer type from https://github.com/que-etc/resize-observer-polyfill/blob/master/src/index.d.ts
