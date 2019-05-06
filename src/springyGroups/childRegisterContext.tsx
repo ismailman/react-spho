@@ -40,14 +40,3 @@ export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
     }
 
 }
-
-
-function flatten<T>(arrayOfArrays: Array<Array<T>>): Array<T> {
-    let arr = [];
-    for(let group of arrayOfArrays) {
-        for(let item of group) {
-            arr.push(item);
-        }
-    }
-    return arr;
-}

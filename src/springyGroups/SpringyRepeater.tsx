@@ -107,8 +107,13 @@ export default class SpringyRepeater extends AbstractChildRegisterProviderClass<
             return (configTarget-configOrigin) * value + configOrigin;
         };
 
-        child.setSpringToValueForProperty(property, target, origin, mapper);
-        const spring = child.getSpringForProperty(property);
+        let spring = child.getSpringForProperty(property);
+        // if there's already a spring for this property then we don't reset the from
+        // value so the spring will go from its current position and go towards the
+        // new target
+        let initialOrigin = spring != null ? null : origin;
+        child.setSpringToValueForProperty(property, target, initialOrigin, mapper);
+        spring = child.getSpringForProperty(property);
         if(!spring) throw new Error('spring should have been created');
 
         let numberOfRepeats = 0;
@@ -139,8 +144,14 @@ export default class SpringyRepeater extends AbstractChildRegisterProviderClass<
         let target = config.to;
         let isTargetBiggerThanOrigin = target - origin > 0;
 
-        child.setSpringToValueForProperty(property, target, origin);
-        const spring = child.getSpringForProperty(property);
+        let spring = child.getSpringForProperty(property);
+        // if there's already a spring for this property then we don't reset the from
+        // value so the spring will go from its current position and go towards the
+        // new target
+        let initialOrigin = spring != null ? null : origin;
+        child.setSpringToValueForProperty(property, target, initialOrigin);
+        
+        spring = child.getSpringForProperty(property);
         if(!spring) throw new Error('spring should have been created');
         spring.unsetValueMapper();
 

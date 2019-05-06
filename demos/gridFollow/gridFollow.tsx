@@ -8,8 +8,8 @@ const SDiv = getSpringyDOMElement('div');
 function Trail() {
     const [length, setLength] = useState(5);
     const [width, setWidth] = useState(5);
-    const [centerRow, setCenterRow] = useState(2);
-    const [centerColumn, setCenterColumn] = useState(2);
+    const [centerRow, setCenterRow] = useState(-1);
+    const [centerColumn, setCenterColumn] = useState(-1);
     const [small, setSmall] = useState(false);
 
     return (

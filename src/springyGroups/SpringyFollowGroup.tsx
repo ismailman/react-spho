@@ -57,7 +57,11 @@ export default class SpringyFollowGroup extends AbstractChildRegisterProviderCla
                     if(lastGroupChild != null){
                         const parentSpring = lastGroupChild.getSpringForProperty(property);
                         if(parentSpring) {
-                            child.setSpringToValueForProperty(property, parentSpring.getCurrentValue() + offset, parentSpring.getCurrentValue() + offset);
+                            // if the child already has a spring for the property then we don't
+                            // override the from value
+                            let childSpring = child.getSpringForProperty(property);
+                            const overridingFrom = childSpring != null ? null : parentSpring.getCurrentValue() + offset;
+                            child.setSpringToValueForProperty(property, parentSpring.getCurrentValue() + offset, overridingFrom);
 
                             this._unregisterFunctions.push(
                                 parentSpring.onUpdate(value => {
