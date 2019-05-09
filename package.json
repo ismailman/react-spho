@@ -6,26 +6,26 @@
   "repository": "https://github.com/ismailman/use-spho.git",
   "author": "<code@omar.dev>",
   "license": "MIT",
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ]
-  },
   "browserslist": [
     "Chrome 72"
   ],
   "dependencies": {
-    "decompose-dommatrix": "^1.0.3",
-    "simple-performant-harmonic-oscillator": "^2.5.0",
-    "transform-values-to-transform-commands": "^1.0.1"
+    "decompose-dommatrix": "^1.1.0",
+    "simple-performant-harmonic-oscillator": "^3.0.2",
+    "transform-values-to-transform-commands": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
+    "@types/jest": "^24.0.12",
+    "@types/lolex": "^3.1.1",
     "@types/react": "^16.8.8",
+    "@types/react-dom": "^16.8.4",
+    "jest": "^24.8.0",
+    "jest-dom": "^3.1.4",
+    "lolex": "^4.0.1",
     "parcel": "^1.12.3",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.4.3"
   }
 }

@@ -45,6 +45,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         delete (cleanProps as any).onSpringyPropertyValueUpdate;
         delete (cleanProps as any).springyOrderedIndex;
         delete (cleanProps as any).springyStyle;
+        delete (cleanProps as any).instanceRef;
 
         if(this.context && this.props.springyOrderedIndex != null){
             this.context.registerChildIndex(this, this.props.springyOrderedIndex);
@@ -186,7 +187,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
 
         for(let property in springyStyle){
             this._setupOrUpdateSpringForProperty(property, springyStyle[property]);
-        }        
+        }
     }
 
     _flipAutoPropsIfNecessary(springyStyle: {[key: string]: number | 'auto'}) {
@@ -232,7 +233,7 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
                 configMap && configMap[property] && configMap[property].onEnterToValue;
 
         // we don't have a target toValue, then don't do anything
-        if(toValue == null || typeof toValue === 'string') return;
+        if(toValue == null || typeof toValue === 'string') return null;
 
         // spring has already been initialized and we're just updating values
         if(spring != null){
@@ -259,6 +260,10 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
             );
 
             this._listenToSpring(spring, property);
+
+            if(fromValue === toValue) {
+                this._updateValueForProperty(property, toValue);
+            }
         }
     }
 
