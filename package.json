@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "description": "Simple spring animation library for React",
   "main": "index.ts",
-  "repository": "https://github.com/ismailman/use-spho.git",
+  "repository": "https://github.com/ismailman/react-spho.git",
   "author": "<code@omar.dev>",
-  "license": "MIT",
   "browserslist": [
     "Chrome 72"
   ],
