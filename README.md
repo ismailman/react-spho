@@ -201,6 +201,14 @@ function ExampleComponent({list}) {
 }
 ```
 ---
+# Examples on Code Sandbox
+
+- [Follow group](https://codesandbox.io/s/reactspho-follow-example-5oqqk)
+- [2-dimensional following in a grid](https://codesandbox.io/s/grid-follow-reactspho-example-gjtlu)
+- [Repeating animations](https://codesandbox.io/s/reactspho-repeating-dcyk6)
+- [Elements transitioning in and out and animated repositioning](https://codesandbox.io/s/reactspho-list-example-wr8ct)
+
+---
 # API Reference
 
 #### `getSpringyDOMElement(domElementName: string, propertyConfigs?: ConfigMap, styleOnExit?: StyleOnExitObject | (DOMNode) => StyleOnExitObject): SpringyComponent`
