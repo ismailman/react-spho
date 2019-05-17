@@ -1,11 +1,11 @@
 {
   "name": "@ismailman/react-spho",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The (hopefully) easiest to use animation library for React for interactive applications.",
   "repository": "https://github.com/ismailman/react-spho.git",
   "author": "<code@omar.dev>",
   "source": "index.tsx",
-  "main": "dist/index.js",  
+  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "unpkg": "dist/react-spho.umd.js",
   "types": "dist/index.d.ts",
