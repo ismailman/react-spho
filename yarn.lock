@@ -7288,10 +7288,10 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-performant-harmonic-oscillator@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-3.0.2.tgz#00cfd0c34734ad2ed28f17520ef35e914d9703e6"
-  integrity sha512-X06QpnIphkbHGQXAsxhxMtQ19cbDZF+VOTftl4Z8WbUBSubz3jT54I1b4O7UGpXZbPTICzr1/anUzNjiVjlV9A==
+simple-performant-harmonic-oscillator@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/simple-performant-harmonic-oscillator/-/simple-performant-harmonic-oscillator-3.0.4.tgz#1536135804c8ff0e6d660020526f34b35aed04df"
+  integrity sha512-SjBkp4tl5yzd56ih8IgatqcQZXapCg8rkyfszVMgPcbOFBqxUhH8sNyQYqwR3/K89iavDAU49s0LYjY5ySh1yA==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"

@@ -23,7 +23,6 @@ function wait(time: number) {
 
 export default class SpringyRepeater extends AbstractChildRegisterProviderClass<Props> {
     static defaultProps = {
-        normalizeToZeroAndOne: true,
         direction: 'back-and-forth',
         numberOfTimesToRepeat: 'infinite'
     };
@@ -87,8 +86,10 @@ export default class SpringyRepeater extends AbstractChildRegisterProviderClass<
         const unregisterFunctions = this._unregisterFunctions.get(child) || [];
         this._unregisterFunctions.set(child, unregisterFunctions);
 
-
-        if(this.props.normalizeToZeroAndOne){
+        if(
+            (Object.keys(this.props.springyRepeaterStyles).length > 1 && this.props.normalizeToZeroAndOne !== false) 
+            || this.props.normalizeToZeroAndOne === true
+        ) {
             unregisterFunctions.push(this._setupNormalizedRepeaterSpring(property, config, child));
         }
         else {

@@ -421,8 +421,8 @@ type SpringyRepeaterProps = {
     // properties (think rotation and opacity) and you want 
     // those properties to be synchronized, i.e. they will always 
     // start and end at the same time, then set this to true. 
-    // Defaults to true. If you want each property to be totally 
-    // independent then set it to false.
+    // Defaults to false if Object.keys(springyRepeaterStyles).length=1
+    // and defaults to true if Object.keys(springyRepeaterStyles).length > 1.
     normalizeToZeroAndOn: boolean;
 
     // by default this is "infinite" which means the values 

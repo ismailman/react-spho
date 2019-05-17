@@ -139,19 +139,20 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
 
     _checkAndTakeOverExistingSpringyDOM(globalUniqueIDForSpringReuse) {
         const existingSpringyDOM = springyDOMMap.get(globalUniqueIDForSpringReuse);
-        if(!existingSpringyDOM) return;
+        if(existingSpringyDOM) {
+            const springMap = existingSpringyDOM._springMap;
+            if(springMap) {
+                for(let [property, spring] of springMap) {
+                    const springClone = spring.clone();
+                    spring.end();
 
-        const springMap = existingSpringyDOM._springMap;
-        if(springMap) {
-            for(let [property, spring] of springMap) {
-                const springClone = spring.clone();
-                spring.end();
-
-                this._listenToSpring(springClone, property);
+                    this._listenToSpring(springClone, property);
+                }
             }
-        }
 
-        if(existingSpringyDOM._transitionOutCloneElement) existingSpringyDOM._transitionOutCloneElement.remove();
+            if(existingSpringyDOM._transitionOutCloneElement) existingSpringyDOM._transitionOutCloneElement.remove();
+        }
+        
         springyDOMMap.set(globalUniqueIDForSpringReuse, this);
     }
 
