@@ -203,7 +203,7 @@ function ExampleComponent({list}) {
 ---
 # API Reference
 
-#### `getSpringyDOMElement(domElementName: string, propertyConfigs?: ConfigMap, styleOnExit?: StyleOnExitObject): SpringyComponent`
+#### `getSpringyDOMElement(domElementName: string, propertyConfigs?: ConfigMap, styleOnExit?: StyleOnExitObject | (DOMNode) => StyleOnExitObject): SpringyComponent`
 
 Creates a new React Component that is a "Springy" version of the DOM element you passed in. Only native DOM elements (`div`, `a`, `p`, `img`, etc are supported). You can't pass in your own custom components. Use the SpringyComponent where you would usually use a `<div>` or whatever, and get organic springy animations for free.
 
@@ -309,6 +309,16 @@ const SpringyDiv = getSpringyDOMElement('div', null, {
     zIndex: 10,
     backgroundColor: 'red'
 });
+
+// or with a function, where node is the newly cloned node
+const SpringyDiv = getSpringyDOMElement('div', null, (node) => {
+    return {
+        position: 'absolute',
+        zIndex: 10,
+        backgroundColor: 'red'
+    };
+});
+
 ```
 
 ## SpringyComponent Props

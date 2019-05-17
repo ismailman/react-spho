@@ -1,4 +1,4 @@
-import React, {useState, cloneElement} from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
 import {getSpringyDOMElement, SpringyRepositionGroup} from '../../index';
