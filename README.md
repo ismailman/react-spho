@@ -68,7 +68,9 @@ springyStyle={{
 You configure the spring dynamics when you create the Springy version of your DOM element. You can't change the dynamics once they've been set.
 
 ```typescript
-// create a new SpringyDiv where the translateX spring will move a bit slower but have more bounce, and the translateY spring will move faster but have no bounce
+// create a new SpringyDiv where the translateX spring 
+// will move a bit slower but have more bounce, and the 
+// translateY spring will move faster but have no bounce
 const SpringyDiv = getSpringyDOMElement('div', {
     translateX: {
         speed: 0.8,
@@ -87,7 +89,10 @@ For the spring config specifically, other spring libraries will have you choose 
 
 This is always a huge pain in the butt with React, so **React SPHO** makes this easier by letting you set enter and exit values on properties for when components are entering and exiting.
 ```typescript
-// creates a SpringyDiv component that when mounted will grow from zero height to the auto "natural" height, and also will fade in when entering, and fade out when exiting
+// creates a SpringyDiv component that when mounted 
+// will grow from zero height to the auto "natural" 
+// height, and also will fade in when entering, and 
+// fade out when exiting
 const SpringyDiv = getSpringyDOMElement('div', {
     height: {
         onEnterFromValue: 0,
@@ -115,7 +120,9 @@ const SpringyDiv = getSpringyDOMElement('div');
 
 function ExampleComponent() {
 
-    // will constantly change the scale of the two SpringyDivs from 0 to 1 and back to 0 and back to 1 forever and ever
+    // will constantly change the scale of the two 
+    // SpringyDivs from 0 to 1 and back to 0 and back 
+    // to 1 forever and ever
     return (
         <SpringyRepeater
             springyRepeaterStyles={{
@@ -141,7 +148,12 @@ const SpringyDiv = getSpringyDOMElement('div');
 
 function ExampleComponent({mousePosition}) {
 
-    // we don't need to specify the translateX and translateY values of the second SpringyDiv element since they're part of the same SpringyFollowGroup and the 2nd element will have the translateX, translateY properties "follow" the leader's values (the SpringyDiv with springyOrderedIndex=0)
+    // we don't need to specify the translateX and translateY 
+    // values of the second SpringyDiv element since they're 
+    // part of the same SpringyFollowGroup and the 2nd element 
+    // will have the translateX, translateY properties 
+    // "follow" the leader's values (the 
+    // SpringyDiv with springyOrderedIndex=0)
     return (
         <SpringyFollowGroup
             properties={['translateX', 'translateY']}
@@ -172,7 +184,9 @@ const SpringyDiv = getSpringyDOMElement('div');
 
 function ExampleComponent({list}) {
 
-    // when items are added/removed/repositioned in the list the SpringyDivs will animate to their new positions automatically
+    // when items are added/removed/repositioned 
+    // in the list the SpringyDivs will animate to 
+    // their new positions automatically
     return (
         <SpringyRepositionGroup>
             {
@@ -214,34 +228,48 @@ type Config = {
     // the default bounciness of the spring for this property
     bounciness?: number;
 
-    // when the new "target" value is larger than the old "target" value you can update the spring's properties
+    // when the new "target" value is larger than 
+    // the old "target" value you can update the spring's properties
     configWhenGettingBigger?: {
         speed?: number;
         bounciness?: number;
     };
 
-    // when the new "target" value is smaller than the old "target" value you can update the spring's properties
+    // when the new "target" value is smaller than the old 
+    // "target" value you can update the spring's properties
     configWhenGettingSmaller?: {
         speed?: number;
         bounciness?: number;
     };
 
-    // if you don't want an absolute starting number, but instead want to make the number relative to the initial target (i.e. the height targets to auto, but you want to start from 20px less)
+    // if you don't want an absolute starting number, but 
+    // instead want to make the number relative to the initial 
+    // target (i.e. the height targets to auto, but you want 
+    // to start from 20px less)
     onEnterFromValueOffset?: number;
 
-    // when you want to animate in from an explicit starting value (think 0 for opacity)
+    // when you want to animate in from an explicit 
+    // starting value (think 0 for opacity)
     onEnterFromValue?: number;
 
-    // when the component is mounted what should the spring animate to
+    // when the component is mounted what should 
+    // the spring animate to
     onEnterToValue?: number | 'auto';
 
     // when unmounting what should the spring start from. 
     onExitFromValue?: number | 'auto';
 
-    // when unmounting what should the spring animate to before being fully removed from the DOM. When using onExitToValue an element is cloned and is placed in the same position as the element that is being removed. This clone gets a couple of styles, specifically `pointer events: none` and the `width` and `height` are explicitly set to the computed value when the clone is created.
+    // when unmounting what should the spring animate to 
+    // before being fully removed from the DOM. When using 
+    // onExitToValue an element is cloned and is placed in 
+    // the same position as the element that is being removed. 
+    // This clone gets a couple of styles, specifically 
+    // `pointer events: none` and the `width` and `height` are 
+    // explicitly set to the computed value when the clone is created.
     onExitToValue?: number;
 
-    // what units should be used for this property? You can't change/mix units for a specific property.
+    // what units should be used for this property? 
+    // You can't change/mix units for a specific property.
     units?: string;
 }
 ```
@@ -292,19 +320,41 @@ type SpringyComponentProps = {
     // map of style properties to values
     springyStyle: Object;
 
-    // Allows you to register a listener for spring value updates. For advanced usage where you want to take action when a certain spring property reaches a certain value.
+    // Allows you to register a listener for 
+    // spring value updates. For advanced usage where 
+    // you want to take action when a certain spring 
+    // property reaches a certain value.
     onSpringyPropertyValueUpdate: (property: string, value: number) => void;
 
-    // Allows you to register a listener for when a spring comes to a stop. You can think of this like the animation ending.
+    // Allows you to register a listener for when a 
+    // spring comes to a stop. You can think of this 
+    // like the animation ending.
     onSpringPropertyValueAtRest: (property: string, value: number) => void
 
-    // When the SpringyComponent is a child of a SpringyGroup component (SpringyRepeater or SpringyFollowGroup) then the springyOrderedIndex specifies the ordering of the element in that group. Within a group there needs to be exactly ONE element with a springyOrderedIndex of 0
+    // When the SpringyComponent is a child of a SpringyGroup 
+    // component (SpringyRepeater or SpringyFollowGroup) then 
+    // the springyOrderedIndex specifies the ordering of the 
+    // element in that group. Within a group there needs to 
+    // be exactly ONE element with a springyOrderedIndex of 0
     springyOrderedIndex: number;
 
-    // This is for a pretty advanced use case - essentially when the you define an onExitToValue and an element is animating out, if you then do another render pass and want to render that same "logical" element again (think of a list that gets filtered, and then you take off the filter) if you use the same globalUniqueIDForSpringReuse the new element will "take over" the springs for that old element and things will transition nicely.
+    // This is for a pretty advanced use case - essentially when 
+    // the you define an onExitToValue and an element is 
+    // animating out, if you then do another render pass 
+    // and want to render that same "logical" element again 
+    // (think of a list that gets filtered, and then you take off the filter) 
+    // if you use the same globalUniqueIDForSpringReuse the 
+    // new element will "take over" the springs for that old 
+    // element and things will transition nicely.
     globalUniqueIDForSpringReuse: string;
 
-    // when you use a ref on a SpringyComponent you'll just get access to the DOM node as if you had rendered a normal "div". If you want to get access to the SpringyComponent instance directly, then you need to pass in an "instanceRef" prop. This most likely will be used very very little and is here more as an "escape" hatch if you need to do something very sophisticated.
+    // when you use a ref on a SpringyComponent you'll just get 
+    // access to the DOM node as if you had rendered a normal 
+    // "div". If you want to get access to the SpringyComponent 
+    // instance directly, then you need to pass in an "instanceRef" prop. 
+    // This most likely will be used very very little and is here 
+    // more as an "escape" hatch if you need to do something 
+    // very sophisticated.
     instanceRef: (ref: SpringyComponent) => void;
 };
 ```
@@ -355,16 +405,29 @@ type SpringyRepeaterProps = {
         }
     };
 
-    // determines how the animation repeats. Does it go back-and-from from "from" to "to" to "from" to "to", etc. Or does it always start from the beginning each time from "from" to "to" and then from "from" to "to" again. The default is back-and-forth.
+    // determines how the animation repeats. Does it 
+    // go back-and-from from "from" to "to" to "from" to "to", etc. 
+    // Or does it always start from the beginning each time 
+    // from "from" to "to" and then from "from" to "to" again. 
+    // The default is "back-and-forth".
     direction: 'from-beginning-each-time' | 'back-and-forth';
 
-    // if multiple SpringyComponents are achild of a SpringyRepeater you can stagger their start times with this number in milliseconds. The springyOrderedIndex is used for ordering.
+    // if multiple SpringyComponents are achild of a SpringyRepeater 
+    // you can stagger their start times with this number in milliseconds. 
+    // The springyOrderedIndex is used for ordering.
     delayStartBetweenChildren: number;
 
-    // if you are repeating the values for multiple different properties (think rotation and opacity) and you want those properties to be synchronized, i.e. they will always start and end at the same time, then set this to true. Defaults to true. If you want each property to be totally independent then set it to false.
+    // if you are repeating the values for multiple different 
+    // properties (think rotation and opacity) and you want 
+    // those properties to be synchronized, i.e. they will always 
+    // start and end at the same time, then set this to true. 
+    // Defaults to true. If you want each property to be totally 
+    // independent then set it to false.
     normalizeToZeroAndOn: boolean;
 
-    // by default this is "infinite" which means the values will animate forever, but if you only want to do a finite number of animations then specify a number here
+    // by default this is "infinite" which means the values 
+    // will animate forever, but if you only want to do a 
+    // finite number of animations then specify a number here
     numberOfTimesToRepeat: number | 'infinite';
 };
 ```
@@ -408,7 +471,9 @@ function Example() {
 
 ```typescript
 type SpringyFollowGroupProps = {
-    // specify which springy properties should be followed. You can specify just a string for the name, or use an object where you specify a name and an offset
+    // specify which springy properties should be followed. 
+    // You can specify just a string for the name, or use an 
+    // object where you specify a name and an offset
     properties: Array<string | {
         property: string;
         offset: number
