@@ -10,16 +10,21 @@ export const ChildRegisterContext = React.createContext({
 export class AbstractChildRegisterProviderClass<T> extends React.PureComponent<T> {
 
     static contextType = ChildRegisterContext;
-    _registeredChildren: Set<SpringyDOMElement> = new Set();
+    _registeredChildren: Array<SpringyDOMElement> = [];
     _orderedChildrenGroups: Array<Array<SpringyDOMElement>>;
 
     registerChild(child: SpringyDOMElement) {
-        this._registeredChildren.add(child);
+        if(this._registeredChildren.indexOf(child) === -1) this._registeredChildren.push(child);
         if(this.context) this.context.registerChild(child);
     }
 
     unregisterChild(child: SpringyDOMElement) {
-        this._registeredChildren.delete(child);
+        const index = this._registeredChildren.indexOf(child);
+        if(index > -1){
+            this._registeredChildren[index] = this._registeredChildren[this._registeredChildren.length - 1];
+            this._registeredChildren.pop();
+        }
+        
         if(this.context) this.context.unregisterChild(child);
     }
 

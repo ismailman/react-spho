@@ -62,9 +62,7 @@ export default class SpringyRepeater extends AbstractChildRegisterProviderClass<
             }
         }
         else {
-            const children = [...this._registeredChildren];
-
-            for(let child of children) {
+            for(let child of this._registeredChildren) {
                 if(this.props.delayStartBetweenChildren != null) {
                     await wait(this.props.delayStartBetweenChildren);
                     if(renderTime !== this._lastRenderTime) return;
