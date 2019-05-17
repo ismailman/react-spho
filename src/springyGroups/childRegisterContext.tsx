@@ -1,13 +1,13 @@
-import React, {createContext, PureComponent} from 'react';
+import React from 'react';
 import SpringyDOMElement from '../SpringyDOMElement';
 
-export const ChildRegisterContext = createContext({
+export const ChildRegisterContext = React.createContext({
     registerChild: (child: SpringyDOMElement) => void 0,
     unregisterChild: (child: SpringyDOMElement) => void 0,
     registerChildIndex: (child: SpringyDOMElement, index: number) => void 0
 });
 
-export class AbstractChildRegisterProviderClass<T> extends PureComponent<T> {
+export class AbstractChildRegisterProviderClass<T> extends React.PureComponent<T> {
 
     static contextType = ChildRegisterContext;
     _registeredChildren: Set<SpringyDOMElement> = new Set();

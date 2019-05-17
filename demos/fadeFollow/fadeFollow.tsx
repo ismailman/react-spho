@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 
-import {getSpringyDOMElement, SpringFollowGroup, SpringyRepositionGroup} from '../../index';
+import {getSpringyDOMElement, SpringyFollowGroup, SpringyRepositionGroup} from '../../index';
 
 const SDiv = getSpringyDOMElement('div', {
     opacity: {
@@ -38,7 +38,7 @@ function Trail() {
                     Toggle
                 </button>
             </div>
-            <SpringFollowGroup properties={["opacity", "translateY", "scale"]}>
+            <SpringyFollowGroup properties={["opacity", "translateY", "scale"]}>
                 {
                     show && arr.map((_, index) => (
                                 <SDiv 
@@ -49,7 +49,7 @@ function Trail() {
                                 />
                             ))                
                 }
-            </SpringFollowGroup>
+            </SpringyFollowGroup>
         </div>
     );
 }

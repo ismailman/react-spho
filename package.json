@@ -1,26 +1,32 @@
 {
   "name": "react-spho",
   "version": "0.0.1",
-  "description": "Simple spring animation library for React",
-  "main": "index.ts",
+  "description": "The (hopefully) easiest to use animation library for React for interactive applications.",
   "repository": "https://github.com/ismailman/react-spho.git",
   "author": "<code@omar.dev>",
-  "browserslist": [
-    "Chrome 72"
-  ],
+  "source": "index.tsx",
+  "main": "dist/index.js",  
+  "module": "dist/index.mjs",
+  "unpkg": "dist/react-spho.umd.js",
+  "types": "dist/index.d.ts",
+  "peerDependencies": {
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5"
+  },
   "dependencies": {
     "decompose-dommatrix": "^1.1.0",
     "simple-performant-harmonic-oscillator": "^3.0.2",
     "transform-values-to-transform-commands": "^1.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.12",
+    "@types/jest": "^24.0.13",
     "@types/lolex": "^3.1.1",
     "@types/react": "^16.8.8",
     "@types/react-dom": "^16.8.4",
     "jest": "^24.8.0",
     "jest-dom": "^3.1.4",
     "lolex": "^4.0.1",
+    "microbundle": "^0.11.0",
     "parcel": "^1.12.3",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",

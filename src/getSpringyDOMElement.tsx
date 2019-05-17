@@ -1,10 +1,10 @@
-import React, {forwardRef} from 'react';
+import React from 'react';
 
 import {SpringyDOMWrapper, DOMSpringConfigMap} from './types';
 import SpringyDOMElement from './SpringyDOMElement';
 
 function getSpringyDOMElement(ComponentToWrap: string, configMap?: DOMSpringConfigMap | null, styleOnExit?: any) {
-     return forwardRef((props, ref) => (
+     return React.forwardRef((props, ref) => (
         <SpringyDOMElement 
             {...props} 
             ComponentToWrap={ComponentToWrap} 

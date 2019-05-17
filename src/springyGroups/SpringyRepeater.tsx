@@ -23,7 +23,7 @@ function wait(time: number) {
 
 export default class SpringyRepeater extends AbstractChildRegisterProviderClass<Props> {
     static defaultProps = {
-        normalizeToZeroAndOne: false,
+        normalizeToZeroAndOne: true,
         direction: 'back-and-forth',
         numberOfTimesToRepeat: 'infinite'
     };

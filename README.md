@@ -2,6 +2,10 @@
 
 The (hopefully) easiest to use animation library for React for interactive applications.
 
+**Note: This is a dual license library. A free license is available for use in free open source projects. Commercial projects require a separate paid license.** The cost is not a lot so don't let the paid portion prevent you from learning about the library.
+
+Quick example of how it works:
+
 ```typescript
 // import the key function from the library
 import {getSpringyDOMElement} from 'react-spho';
@@ -187,7 +191,13 @@ function ExampleComponent({list}) {
 
 #### `getSpringyDOMElement(domElementName: string, propertyConfigs?: ConfigMap, styleOnExit?: StyleOnExitObject): SpringyComponent`
 
-Creates a new React Component that is a "Springy" version of the DOM element you passed in. Only native DOM elements (`div`, `a`, `p`, `img`, etc are supported). You can't pass in your own custom components. Use this the SpringyComponent where you would usually use a `<div>` or whatever, and get organicy springy animations for free.
+Creates a new React Component that is a "Springy" version of the DOM element you passed in. Only native DOM elements (`div`, `a`, `p`, `img`, etc are supported). You can't pass in your own custom components. Use the SpringyComponent where you would usually use a `<div>` or whatever, and get organic springy animations for free.
+
+```typescript
+const SpringyDiv = getSpringyDOMElement('div');
+const SpringyAnchor = getSpringyDOMElement('a');
+const SpringyImg = getSpringyDOMElement('img');
+```
 
 ## ConfigMap
 
@@ -198,83 +208,268 @@ type ConfigMap = {
 };
 
 type Config = {
+    // the default speed of the spring for this property
     speed?: number;
+
+    // the default bounciness of the spring for this property
     bounciness?: number;
+
+    // when the new "target" value is larger than the old "target" value you can update the spring's properties
     configWhenGettingBigger?: {
         speed?: number;
         bounciness?: number;
     };
+
+    // when the new "target" value is smaller than the old "target" value you can update the spring's properties
     configWhenGettingSmaller?: {
         speed?: number;
         bounciness?: number;
     };
+
+    // if you don't want an absolute starting number, but instead want to make the number relative to the initial target (i.e. the height targets to auto, but you want to start from 20px less)
     onEnterFromValueOffset?: number;
+
+    // when you want to animate in from an explicit starting value (think 0 for opacity)
     onEnterFromValue?: number;
+
+    // when the component is mounted what should the spring animate to
     onEnterToValue?: number | 'auto';
+
+    // when unmounting what should the spring start from. 
     onExitFromValue?: number | 'auto';
+
+    // when unmounting what should the spring animate to before being fully removed from the DOM. When using onExitToValue an element is cloned and is placed in the same position as the element that is being removed. This clone gets a couple of styles, specifically `pointer events: none` and the `width` and `height` are explicitly set to the computed value when the clone is created.
     onExitToValue?: number;
+
+    // what units should be used for this property? You can't change/mix units for a specific property.
     units?: string;
 }
+```
+
+Example
+```typescript
+const SpringyDiv = getSpringyDOMElement('div', {
+    scale: {
+        speed: 1.2,
+        bounciness: 1.2,
+        onEnterFromValue: 0.1,
+        onEnterToValue: 1,
+        onExitToValue: 2     
+    },
+    opacity: {
+        onExitToValue: 0
+    },
+    height: {
+        configWhenGettingBigger: {
+            bounciness: 1.2
+        },
+        configWhenGettingSmaller: {
+            bounciness: 0.5
+        },
+        units: 'vh'
+    }
+});
 ```
 
 ## StyleOnExitObject
 
 If you supply an onExitToValue then what **React SPHO** does under the hood is that when the element gets unmounted a clone of the element is created and placed in the same DOM tree position and the style elements are animated on that cloned DOM node. Sometimes you'll want to add extra styles to that cloned DOM node, and this is where you specify that (i.e. position absolute, a background color, whatever).
 
-#### SpringyComponent Props
+```typescript
+const SpringyDiv = getSpringyDOMElement('div', null, {
+    position: 'absolute',
+    zIndex: 10,
+    backgroundColor: 'red'
+});
+```
 
-Once you have a `SpringyComponent` and you render it a la:
+## SpringyComponent Props
+
+When you have a springy version of a DOM element and you render that new component, all the normal props you can pass into a native DOM element work the same (tabIndex, src, title, etc). The SpringyComponent version also handles some extra props around the spring functionality.
+
+```typescript
+type SpringyComponentProps = {
+    // map of style properties to values
+    springyStyle: Object;
+
+    // Allows you to register a listener for spring value updates. For advanced usage where you want to take action when a certain spring property reaches a certain value.
+    onSpringyPropertyValueUpdate: (property: string, value: number) => void;
+
+    // Allows you to register a listener for when a spring comes to a stop. You can think of this like the animation ending.
+    onSpringPropertyValueAtRest: (property: string, value: number) => void
+
+    // When the SpringyComponent is a child of a SpringyGroup component (SpringyRepeater or SpringyFollowGroup) then the springyOrderedIndex specifies the ordering of the element in that group. Within a group there needs to be exactly ONE element with a springyOrderedIndex of 0
+    springyOrderedIndex: number;
+
+    // This is for a pretty advanced use case - essentially when the you define an onExitToValue and an element is animating out, if you then do another render pass and want to render that same "logical" element again (think of a list that gets filtered, and then you take off the filter) if you use the same globalUniqueIDForSpringReuse the new element will "take over" the springs for that old element and things will transition nicely.
+    globalUniqueIDForSpringReuse: string;
+
+    // when you use a ref on a SpringyComponent you'll just get access to the DOM node as if you had rendered a normal "div". If you want to get access to the SpringyComponent instance directly, then you need to pass in an "instanceRef" prop. This most likely will be used very very little and is here more as an "escape" hatch if you need to do something very sophisticated.
+    instanceRef: (ref: SpringyComponent) => void;
+};
+```
+
+Example
 ```typescript
 const SpringyDiv = getSpringyDOMElement('div');
 
+const uniqueID = String(Math.random());
+
 function ExampleComponent() {
     return (
-        <SpringyDiv>hello world</SpringyDiv>
+        <SpringyDiv
+            springyStyle={{
+                left: 10,
+                top: 10,
+                opacity: 1,
+                rotate: 25
+            }}
+            onSpringyPropertyValueUpdate((property, value) => {
+                console.log(property, 'has a new value:', value);
+            })
+            onSpringyPropertyValueAtRest((property, value) => {
+                console.log(property, 'has stopped moving with value:', value);
+            })
+            globalUniqueIDForSpringyReuse={uniqueID}
+        >
+            Hello World
+        </SpringyDiv>
     );
 }
 ```
 
-The SpringyComponent takes in all the props that a normal DOM component takes in (style, tabIndex, title, src, etc) but it can also take in and make use of some extra props.
 
-## springyStyle: Object
+---
+# Springy Group APIs
+These components let you define how springs for multiple elements should be animated together.
 
-Already discussed above, but an object that specifies the new target values for the specified style properties.
+## `SpringyRepeater Props`
 
 ```typescript
-<SpringyDiv
-    springStyle={{
-        left: 10,
-        top: 10,
-        opacity: 1,
-        rotate: 25
-    }}
-/>
+type SpringyRepeaterProps = {
+    // a map of properties to repeat over and what values repeat to and from
+    springyRepeaterStyles: {
+        [key: string]: {
+            from: number;
+            to: number;
+        }
+    };
+
+    // determines how the animation repeats. Does it go back-and-from from "from" to "to" to "from" to "to", etc. Or does it always start from the beginning each time from "from" to "to" and then from "from" to "to" again. The default is back-and-forth.
+    direction: 'from-beginning-each-time' | 'back-and-forth';
+
+    // if multiple SpringyComponents are achild of a SpringyRepeater you can stagger their start times with this number in milliseconds. The springyOrderedIndex is used for ordering.
+    delayStartBetweenChildren: number;
+
+    // if you are repeating the values for multiple different properties (think rotation and opacity) and you want those properties to be synchronized, i.e. they will always start and end at the same time, then set this to true. Defaults to true. If you want each property to be totally independent then set it to false.
+    normalizeToZeroAndOn: boolean;
+
+    // by default this is "infinite" which means the values will animate forever, but if you only want to do a finite number of animations then specify a number here
+    numberOfTimesToRepeat: number | 'infinite';
+};
 ```
 
-## springyOrderedIndex: number
+Example
+```typescript
 
-When the SpringyComponent is a child of a SpringyGroup component (SpringyRepeater or SpringyFollowGroup) then the springyOrderedIndex specifies the ordering of the element in that group.
+import {SpringyRepeater} from 'react-spho';
 
-## globalUniqueIDForSpringReuse: string
+function Example() {
 
-This is for a pretty advanced use case - essentially when the you define an onExitToValue and an element is animating out, if you then do another render pass and want to render that same "logical" element again (think of a list that gets filtered, and then you take off the filter) if you use the same `globalUniqueIDForSpringReuse` the new element will "take over" the springs for that old element and things will transition nicely.
+    return (
+        <SpringyRepeater
+            springyRepeaterStyles={{
+                scale: {
+                    from: 0,
+                    to: 1
+                },
+                rotate: {
+                    from: 0,
+                    to: 360
+                }
+            }}
+            direction="from-beginning-each-time"
+            delayStartBetweenChildren={200}
+            numberOfTimesToRepeat={3}
+        >
+            <SpringyDiv springyOrderedIndex={0}>
+                Hello
+            </SpringyDiv>
+            <SpringyDiv springyOrderedIndex={1}>
+                World
+            </SpringyDiv>
+        </SpringyRepeater>
+    );
 
-## onSpringyPropertyValueUpdate: (property: string, value: number) => void
+}
+```
 
-Allows you to register a listener for spring value updates. For advanced usage where you want to take action when a certain spring property reaches a certain value.
+## `SpringyFollowGroup Props`
 
-## onSpringPropertyValueAtRest: (property: string, value: number) => void
+```typescript
+type SpringyFollowGroupProps = {
+    // specify which springy properties should be followed. You can specify just a string for the name, or use an object where you specify a name and an offset
+    properties: Array<string | {
+        property: string;
+        offset: number
+    }>;
+}
+```
 
-Allows you to register a listener for when a spring comes to a stop. You can think of this like the animation ending.
+Example
+```typescript
+import {SpringyFollowGroup} from 'react-spho';
 
-# Springy Group APIs
+function ExampleComponent({mousePosition}) {
+    return (
+        <SpringyFollowGroup
+            properties={[
+                'translateX',
+                {
+                    property: 'translateY',
+                    offset: 5
+                }
+            ]}
+        >
+            <SpringyDiv 
+                springyStyle={{
+                    translateX: mousePosition.x,
+                    translateY: mousePosition.y
+                }}
+                springyOrderedIndex={0}
+            >
+                Hello
+            </SpringyDiv>
+            <SpringyDiv springyOrderedIndex={1}>
+                World
+            </SpringyDiv>
+        </SpringyFollowGroup>
+    );
+}
+```
 
-#### SpringyRepeater
+## `SpringyRepositionGroup Props`
 
-Surround one or more SpringyComponents in a SpringyRepeater to have the specified value transitions repeat. Springy
+There actually are no props to the SpringyRepositionGroup element itself, just the children. But it's very important to note: SpringyRepositionGroup only works with SpringyDOMElements. The reposition group uses `translateX` and `translateY` to *flip* from the old position to new. For translate properties to have a visual effect the element needs to be a "block level element". Most commonly this will be display: block or display:inline-block. display: flex also works.
 
-## Gotchas
+Example
+```typescript
+import {SpringyRepositionGroup} from 'react-spho';
 
-When using onExitToValue an element is cloned and is placed in the same position as the element that is being removed. This clone gets a couple of styles, specifically `pointer events: none` and the `width` and `height` are explicitly set to the computed value when the clone is created.
+function ExampleComponent({list}) {
+    return (
+        <SpringyRepositionGroup>
+            {
+                list.map(item => (
+                    <SpringyDiv key={item.id}>
+                        {item.text}
+                    </SpringyDiv>
+                ))
+            }
+        </SpringyRepositionGroup>
+    );
+}
 
-SpringyRepositionGroup only works with SpringyDOMElements. The reposition group uses `translateX` and `translateY` to *flip* from the old position to new. For translate properties to have a visual effect the element needs to be a "block level element". Most commonly this will be display: block or display:inline-block. display: flex also works.
+```
+
+
