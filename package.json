@@ -1,6 +1,6 @@
 {
   "name": "@ismailman/react-spho",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "The (hopefully) easiest to use animation library for React for interactive applications.",
   "repository": "https://github.com/ismailman/react-spho.git",
   "author": "<code@omar.dev>",
@@ -20,9 +20,9 @@
     "react-dom": "^16.8.5"
   },
   "dependencies": {
-    "decompose-dommatrix": "^1.2.0",
+    "decompose-dommatrix": "^1.1.0",
     "simple-performant-harmonic-oscillator": "^3.0.4",
-    "transform-values-to-transform-commands": "^1.1.0"
+    "transform-values-to-transform-commands": "^1.2.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
