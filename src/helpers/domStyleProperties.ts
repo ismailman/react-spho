@@ -13,7 +13,8 @@ export const TRANSFORM_PROPERTIES = [
     'rotateZ',
     'skew',
     'skewX',
-    'skewY'
+    'skewY',
+    'perspective'
 ];
 
 export const AUTO_PROPERTIES = [
@@ -80,5 +81,6 @@ export const DEFAULT_UNIT_SUFFIXES = {
     'letterSpacing': 'px',
     'textIndent': 'px',
     'wordSpacing': 'px',
-    'opacity': ''
+    'opacity': '',
+    'perspective': 'px'
 };
