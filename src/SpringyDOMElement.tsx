@@ -47,10 +47,6 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         delete (cleanProps as any).springyStyle;
         delete (cleanProps as any).instanceRef;
 
-        if(this.context && this.props.springyOrderedIndex != null){
-            this.context.registerChildIndex(this, this.props.springyOrderedIndex);
-        }
-
         if(this.props.globalUniqueIDForSpringReuse){
             this._checkAndTakeOverExistingSpringyDOM(this.props.globalUniqueIDForSpringReuse);
         }
@@ -82,21 +78,34 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
     }
 
     componentDidMount(){
-        if(this.context) this.context.registerChild(this);
+        if(this.context) {
+            this.context.registerChild(this);
+            if(this.props.springyOrderedIndex != null){
+                this.context.registerChildIndex(this, this.props.springyOrderedIndex);
+            }
+        }
         if(!this._isSecondRender && this._needsSecondRender){
             this._rerenderToUseTrueSize();
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps: InternalSpringyProps){
+        if(this.context){
+            if(prevProps.springyOrderedIndex !== null && prevProps.springyOrderedIndex != this.props.springyOrderedIndex){
+                this.context.unregisterChildIndex(this, prevProps.springyOrderedIndex);
+
+                if(this.props.springyOrderedIndex != null) {
+                    this.context.registerChildIndex(this, this.props.springyOrderedIndex);
+                }
+            }
+        }
+
         if(!this._isSecondRender && this._needsSecondRender){
             this._rerenderToUseTrueSize();
         }
     }
 
     componentWillUnmount() {
-        if(this.context) this.context.unregisterChild(this);
-        this._cleanUpSprings();
         this._killResizeObserver();
 
         this._handleOnExitIfExists();
@@ -347,13 +356,12 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
         if(!configMap || !this._ref) return;
         const propertiesWithOnExitToValue = Object.keys(configMap).filter(property => configMap[property].onExitToValue != null);
 
-        if(propertiesWithOnExitToValue.length === 0) return;
+        if(propertiesWithOnExitToValue.length === 0) {
+            this._cleanUpSprings();
+            return;
+        }
 
         const lastStyle = {...(this.props as any).style};
-
-        if(this.context && this.props.springyOrderedIndex != null){
-            this.context.registerChildIndex(this, this.props.springyOrderedIndex);
-        }
 
         const clone = this._transitionOutCloneElement = this._ref.cloneNode(true) as HTMLElement; //true = deep clone
         clone.style.pointerEvents = 'none';
@@ -446,6 +454,13 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
             spring.end();
         }
         this._springMap.clear();
+
+        if(this.context) {
+            this.context.unregisterChild(this);
+            if(this.props.springyOrderedIndex != null){
+                this.context.unregisterChildIndex(this, this.props.springyOrderedIndex);
+            }
+        }
     }
  }
 
