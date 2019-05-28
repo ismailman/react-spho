@@ -2,7 +2,7 @@
 
 The (hopefully) easiest to use animation library for React for interactive applications.
 
-**Note: This is a dual license library. A free license is available for use in free open source projects. Commercial projects require a separate paid license.** The cost is not a lot (starts at $50 for small companies and goes up to $1000 for organizations with > $10M revenue per year) so don't let the paid portion prevent you from learning about the library.
+**Note: This is a dual license library. A free license is available for use in free open source projects. Commercial projects require a separate paid license.** The cost is not a lot (starts at $50 for small companies and goes up to $1000 for organizations with > $10M revenue per year) so don't let the paid portion prevent you from learning about the library. Look at the end of this readme for licensing information.
 
 Installation:
 
@@ -568,3 +568,12 @@ function ExampleComponent({list}) {
 ```
 
 
+# Licensing
+
+The default license for this library is found in the LICENSE file and lets you use **React SPHO** for free in non-commercial projects. If you want to use **React SPHO** commercially then there is a separate paid private license available to purchase, the price of which depends on your organization's yearly revenue. This is a one time purchase and gives you the right to use the library in commercial projects indefinitely.
+
+- [**$50** - Up to $100,000 USD in Revenue](https://gum.co/react-spho-license-tier-1)
+- [**$100** - Between $100,000 USD and $1,000,0000 in Revenue](https://gum.co/react-spho-license-tier-2)
+- [**$250** - Between $1,000,000 USD and $5,000,0000 in Revenue](https://gum.co/react-spho-license-tier-3)
+- [**$500** - Between $5,000,000 USD and $10,000,0000 in Revenue](https://gum.co/react-spho-license-tier-4)
+- [**$1000** - Above $10,000,000 USD in Revenue](https://gum.co/react-spho-license-tier-5)
