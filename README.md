@@ -4,6 +4,18 @@ The (hopefully) easiest to use animation library for React for interactive appli
 
 **Note: This is a dual license library. A free license is available for use in free open source projects. Commercial projects require a separate paid license.** The cost is not a lot (starts at $50 for small companies and goes up to $1000 for organizations with > $10M revenue per year) so don't let the paid portion prevent you from learning about the library.
 
+Installation:
+
+```bash
+npm install @ismailman/react-spho
+```
+
+or 
+
+```bash
+yarn add @ismailman/react-spho
+```
+
 Quick example of how it works:
 
 ```typescript
