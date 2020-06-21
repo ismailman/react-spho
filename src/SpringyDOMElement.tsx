@@ -1,10 +1,9 @@
 import React from 'react';
 import Spring from 'simple-performant-harmonic-oscillator';
-import decomposeDOMMatrix from 'decompose-dommatrix';
 
 import {InternalSpringyProps} from './types';
 
-import {TRANSFORM_PROPERTIES, AUTO_PROPERTIES, RESIZE_PROPERTIES} from './helpers/domStyleProperties';
+import {AUTO_PROPERTIES, RESIZE_PROPERTIES} from './helpers/domStyleProperties';
 import getConfig from './helpers/getConfig';
 import getUnits from './helpers/getUnits';
 import handleForwardedRef from './helpers/handleForwardedRef';
@@ -391,23 +390,9 @@ export default class SpringyDOMElement extends React.PureComponent<InternalSprin
             reconciler(clone, lastStyle, styleOnExit);
         }
 
-        propertiesWithoutOnExitFromValue.filter(property => !TRANSFORM_PROPERTIES.includes(property)).forEach(property => {
+        propertiesWithoutOnExitFromValue.forEach(property => {
             fromValues[property] = parseFloat(computedStyle.getPropertyValue(property)); //use target value for mutable prop
-        });
-
-        const transformPropertiesWithOnExitValue = propertiesWithoutOnExitFromValue.filter(property => TRANSFORM_PROPERTIES.includes(property));
-        if(transformPropertiesWithOnExitValue.length > 0){
-            const domMatrix = new DOMMatrix(computedStyle.getPropertyValue('transform'));
-            const transformValues = decomposeDOMMatrix(domMatrix);
-            for(let property of transformPropertiesWithOnExitValue){
-                if(property === 'scale'){
-                    fromValues[property] = transformValues.scaleX;
-                }
-                else {
-                    fromValues[property] = transformValues[property];
-                }
-            }
-        }
+        });        
 
         clone.insertAdjacentElement('beforebegin', this._ref);
 

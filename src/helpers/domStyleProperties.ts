@@ -1,22 +1,3 @@
-export const TRANSFORM_PROPERTIES = [
-    'scaleX',
-    'scaleY',
-    'scaleZ',
-    'scale',
-    'translate',
-    'translateX',
-    'translateY',
-    'translateZ',
-    'rotate',
-    'rotateX',
-    'rotateY',
-    'rotateZ',
-    'skew',
-    'skewX',
-    'skewY',
-    'perspective'
-];
-
 export const AUTO_PROPERTIES = [
     'width',
     'height',
