@@ -1,6 +1,6 @@
 {
   "name": "@ismailman/react-spho",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "The (hopefully) easiest to use animation library for React for interactive applications.",
   "repository": "https://github.com/ismailman/react-spho.git",
   "author": "<code@omar.dev>",
